@@ -270,7 +270,7 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
      * ------------------------------
      * Public API
      *
-     * This are the methods that we
+     * These are the methods that we
      * want to expose publicly.
      * MegaSuperSynthInputs taps into
      * these to control the synth.
@@ -361,16 +361,12 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
     /**
      * ----------------------------
      * HANDLE LISTENER ROUTING
+     * 
      * Different types of event
      * trigger the same end-results
      * but require different paths
      * (e.g. mousedown and
      * mouseover)
-     *
-     * _notePress
-     * _noteMouseover
-     * _noteMouseout
-     * _noteMouseup
      * ----------------------------
      */
     
@@ -404,6 +400,7 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
     /**
      * ---------------------
      * CONTROLLER ROUTING
+     * 
      * Sends controller data
      * to controller
      * ---------------------
