@@ -4,9 +4,9 @@ Playing with the Web Audio API, and hooking the results into super-fancy visuali
 
 ## Tasks:
 
-1. [ ] Import Keyboard JS functions
-2. [ ] Refactor JS
-3. [ ] Set-up base markup etc.
+1. [x] Import Keyboard JS functions
+2. [x] Refactor JS
+3. [x] Set-up base markup etc.
 4. [ ] Extend keyboard with visualisations
     - volume (live & over time)
     - frequency (live & over time)
