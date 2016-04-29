@@ -98,6 +98,13 @@ a {
 strong {
   font-weight: bold; }
 
+code {
+  font-family: monospace;
+  background: #dad8d2;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0 .2em;
+  margin: 0 .2em; }
+
 input[type="range"].pianoController {
   display: block;
   -webkit-appearance: none;

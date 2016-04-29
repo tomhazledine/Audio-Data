@@ -20506,7 +20506,6 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
      */
     function _noteKeydown(key){
         // If the key is already being held down, abort function.
-        console.log(key.keyCode);
         if (key.keyCode in keysDown){
             key.preventDefault();
             return;
@@ -20516,7 +20515,6 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
         if (typeof keyToKey[key.keyCode] !== 'undefined'){
             key.preventDefault();
             noteValue = keyToKey[key.keyCode];
-            console.log(noteValue);
             newSynth.noteStart(noteValue);
         }
     }

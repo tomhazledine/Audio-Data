@@ -5,4 +5,7 @@
 
 <?php include('keyboard.php'); ?>
 
+<h2>Fancy visualisations will go here</h2>
+<p>Now we've got some audio with a <code>context.destination</code>, we can hook that into all sorts of analytical tools&hellip;</p>
+
 <?php include('footer.php'); ?>

@@ -38,3 +38,13 @@ a{
 strong{
     font-weight:bold;
 }
+
+code{
+    font-family:$code;
+    // color:$black;
+    background:$grey;
+    // color:$primary;
+    background:rgba(black,.1);
+    padding:0 .2em;
+    margin:0 .2em;
+}
