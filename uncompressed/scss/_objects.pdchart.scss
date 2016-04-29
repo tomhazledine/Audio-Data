@@ -1,0 +1,105 @@
+#chart2{
+
+    height:40em;
+    padding-bottom:0;
+
+    .bgBar{
+        fill:none;
+    }
+
+    .chartWrapper{
+        overflow:hidden;
+    }
+    .active{
+        .lineengland_pd{ stroke:$england; }
+        .linescotland_pd{ stroke:$scotland; }
+        .lineireland_pd{ stroke:$ireland; }
+        .linewales_pd{ stroke:$wales; }
+        .linefrance_pd{ stroke:$france; }
+        .lineitaly_pd{ stroke:$italy; }
+
+        .areaengland_pd{  fill:rgba($england, .3); }
+        .areascotland_pd{ fill:rgba($scotland,.3); }
+        .areaireland_pd{  fill:rgba($ireland, .3); }
+        .areawales_pd{    fill:rgba($wales,   .3); }
+        .areafrance_pd{   fill:rgba($france,  .3); }
+        .areaitaly_pd{    fill:rgba($italy,   .3); }
+    }
+
+    .circleengland_pd{ fill:$england; }
+    .circlescotland_pd{ fill:$scotland; }
+    .circleireland_pd{ fill:$ireland; }
+    .circlewales_pd{ fill:$wales; }
+    .circlefrance_pd{ fill:$france; }
+    .circleitaly_pd{ fill:$italy; }
+
+    .chartline{
+        stroke-width:.1rem;
+        stroke:transparent;
+        // opacity:.1;
+        position:relative;
+        z-index:2;
+        cursor:pointer;
+        transition:opacity,stroke;
+        transition-duration:.2s;
+        // &:hover{
+        //     opacity:1;
+        //     z-index:3;
+        //     stroke-width:.2em;
+        // }
+    }
+
+    .chartcircle{
+        opacity:0;
+        cursor:pointer;
+        transition:opacity;
+        transition-duration:.2s;
+        // box-shadow:$black 0 0 0 1em;
+    }
+
+    .axesWrapper{
+        font-size:.8em;
+    }
+
+    .xAxis{
+        line,path{
+            // display:none;
+        }
+        text{
+            // transform:rotate(-90deg, 50, 100);
+            // transform-origin:bottom right;
+        }
+    }
+    .zAxis{
+        .tick{
+            line{
+                transform:translate(0, -45%);
+            }
+            text{
+                display:none;
+            }
+        }
+    }
+
+    .chartarea{
+        fill:rgba($grey,.3);
+        position:relative;
+        z-index:1;
+    }
+
+    .entry.active{
+        .chartline{
+            opacity:1;
+            // stroke-width:.2em;
+        }
+        .chartcircle{
+            opacity:1;
+            stroke-width:2px;
+            stroke-color:$black;
+        }
+        .chartarea{
+            z-index:2;
+        }
+    }
+
+}

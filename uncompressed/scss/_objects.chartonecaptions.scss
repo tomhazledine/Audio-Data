@@ -1,0 +1,38 @@
+.captionSelectors{
+	text-align:center;
+
+}
+
+.triggerchart1{
+    @extend %buttonReset;
+	display:inline-block;
+    width:2em;
+    height:2em;
+    line-height:1;
+    padding:.4em 0;
+    text-align:center;
+    background:#777;
+    border-radius:1em;
+    color:$white;
+    transition:background, .2s;
+    &:hover{
+        background:$black;
+    }
+    &:focus{
+        outline:none;
+    }
+    &.active{
+        background:$black;
+    }
+}
+
+.chart1captions{
+    min-height:10em;
+}
+
+.chart1caption{
+	display:none;
+	&.active{
+		display:block;
+	}
+}

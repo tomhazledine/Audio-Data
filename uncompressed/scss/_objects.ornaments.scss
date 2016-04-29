@@ -1,0 +1,46 @@
+.textBlock.rugbyBlock{
+    border-top:.1rem solid $black;
+    padding-top:.5rem;
+    position:relative;
+    // box-shadow:
+    //     $white 0 -.1rem 0 0,
+    //     #aaa 0 -.2rem 0 0;
+    &:before{
+        display:block;
+        content:'rugby';
+        line-height:1;
+        position:absolute;
+        top:-.5em;
+        left:0;
+        text-transform:uppercase;
+        letter-spacing:.1em;
+        background:$white;
+        color:$black;
+    }
+    &:after{
+        display:block;
+        content:'';
+        line-height:1;
+        position:absolute;
+        top:-.4rem;
+        right:-.1em;
+        text-transform:uppercase;
+        letter-spacing:.1rem;
+        background:$black;
+        width:.8rem;
+        height:.8rem;
+        box-shadow:$white -.3em 0 0 0;
+        border-radius:.8rem .2rem .8rem .2rem;
+    }
+}
+
+.ballPoly{
+    width:20%;
+    padding-bottom:20%;
+    margin:0 auto;
+    margin-bottom:2em;
+    background-image:url('../images/rugbyballpoly.svg');
+    background-size:contain;
+    background-position:center;
+    background-repeat:no-repeat;
+}

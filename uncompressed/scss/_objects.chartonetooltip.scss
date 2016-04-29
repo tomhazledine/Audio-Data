@@ -1,0 +1,100 @@
+.chart1tooltip{
+    @extend .clearfix;
+    line-height:1;
+    opacity:0;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-weight:$bold;
+    font-size:.8em;
+    margin-bottom:.5em;
+    color:$grey;
+    transition:color .2s;
+    .colourBox{
+        float:left;
+        width:1em;
+        height:1em;
+        background:#aaa;
+        margin-right:.5em;
+        transition:opacity .2s;
+        opacity:.4;
+    }
+    &.active,
+    &.passive{
+        opacity:1;
+    }
+    &.hovering{
+        color:$black;
+    }
+    &.england{
+        .colourBox{
+            background:$england;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$england;
+        }
+    }
+    &.scotland{
+        .colourBox{
+            background:$scotland;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$scotland;
+        }
+        // border:solid .1rem $scotland;
+        // background:rgba($white,.6);//rgba($scotland,.2);
+        // color:$scotland;
+    }
+    &.ireland{
+        .colourBox{
+            background:$ireland;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$ireland;
+        }
+        // border:solid .1rem $ireland;
+        // background:rgba($white,.6);//rgba($ireland,.2);
+        // color:$ireland;
+    }
+    &.wales{
+        .colourBox{
+            background:$wales;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$wales;
+        }
+        // border:solid .1rem $wales;
+        // background:rgba($white,.6);//rgba($wales,.2);
+        // color:$wales;
+    }
+    &.france{
+        .colourBox{
+            background:$france;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$france;
+        }
+        // border:solid .1rem $france;
+        // background:rgba($white,.6);//rgba($france,.2);
+        // color:$france;
+    }
+    &.italy{
+        .colourBox{
+            background:$italy;
+        }
+        &.hovering .colourBox{
+            opacity:1;
+            // color:$italy;
+        }
+        // border:solid .1rem $italy;
+        // background:rgba($white,.6);//rgba($italy,.2);
+        // color:$italy;
+    }
+}
+// .chart1tooltip.passive{
+//     opacity:1;
+// }

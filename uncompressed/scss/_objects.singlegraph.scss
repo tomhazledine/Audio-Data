@@ -1,0 +1,96 @@
+/**
+ * -----------------
+ * BASIC LAYOUT
+ *
+ * Container and
+ * sizing for graph.
+ * -----------------
+ */
+.singleGraph{
+    padding:2em;
+    // background:$grey;
+}
+.singleGraphContainer{
+    width:100%;
+    background:$white;
+    padding-bottom:40%;
+    margin:1em auto;
+    position:relative;
+}
+
+/**
+ * --------------------
+ * GLOBAL
+ *
+ * Styles for universal
+ * features like axes &
+ * labels, etc.
+ * --------------------
+ */
+.singleGraph{
+    .bgBar{
+        stroke:#eee;
+        stroke-width:1px;
+        // stroke-dasharray:5,5;
+        fill:none;
+    }
+    // .hoverTarget{
+    //     fill:rgba($black,0);
+    //     transition:fill .2s;
+    //     cursor:pointer;
+    //     &:hover{
+    //         fill:rgba($black,.5);
+    //     }
+    // }
+    .axesWrapper{
+        font-size:.8em;
+        text{
+            fill:#777;
+        }
+    }
+    .axis path{
+        stroke:$grey;
+    }
+    .xAxis .tick{
+        line{
+            stroke:$grey;
+        }
+    }
+    .yAxis path{
+        display:none;
+    }
+    .yAxis .tick{
+        line{
+            display:none;
+        }
+        text{
+            // x:-20;
+        }
+    }
+}
+
+.singleGraphTooltips{
+}
+
+/**
+ * -----------------
+ * LINES & DOTS
+ *
+ * Styles for lines
+ * and general graph
+ * content.
+ * -----------------
+ */
+.singleGraph{
+    .chartline{
+        display:block;
+        stroke:#ddd;
+        stroke-width:3px;
+    }
+    .chartcircle{
+        fill:$white;
+        stroke:#ddd;
+        stroke-width:3px;
+        r:6px;
+    }
+}

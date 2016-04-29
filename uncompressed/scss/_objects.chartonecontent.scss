@@ -1,0 +1,79 @@
+#chart1{
+
+    height:14em;
+    padding-bottom:0;
+
+    .chartWrapper{
+        overflow:hidden;
+    }
+    .active .chartline,.passive.active .chartline,.passive.hovering .chartline{
+        display:block;
+        &.lineengland{ stroke:$england; }
+        &.linescotland{ stroke:$scotland; }
+        &.lineireland{ stroke:$ireland; }
+        &.linewales{ stroke:$wales; }
+        &.linefrance{ stroke:$france; }
+        &.lineitaly{ stroke:$italy; }
+        &.chartline_hover{
+            stroke:transparent;
+        }
+    }
+
+    .circleengland{ fill:$england; }
+    .circlescotland{ fill:$scotland; }
+    .circleireland{ fill:$ireland; }
+    .circlewales{ fill:$wales; }
+    .circlefrance{ fill:$france; }
+    .circleitaly{ fill:$italy; }
+    
+    .chartline{
+        display:none;
+        stroke-width:.1rem;
+        stroke:transparent;
+        // opacity:.1;
+        position:relative;
+        z-index:2;
+        cursor:pointer;
+        transition:opacity,stroke;
+        transition-duration:.2s;
+        // &:passive{
+        //     opacity:1;
+        //     z-index:3;
+        //     stroke-width:.2em;
+        // }
+        &.chartline_hover{
+            stroke-width:1rem;
+            stroke:transparent;
+        }
+    }
+
+    .passive .chartline{
+        stroke:$grey;
+        z-index:2;
+        display:block;
+        &.chartline_hover{
+            stroke:transparent;
+        }
+    }
+
+    .chartcircle{
+        opacity:0;
+        cursor:pointer;
+        transition:opacity;
+        transition-duration:.2s;
+        // box-shadow:$black 0 0 0 1em;
+    }
+
+    .entry.active{
+        .chartline{
+            opacity:1;
+            // stroke-width:.2em;
+        }
+        .chartcircle{
+            opacity:1;
+            stroke-width:2px;
+            stroke-color:$black;
+        }
+    }
+
+}

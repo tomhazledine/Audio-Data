@@ -1,0 +1,29 @@
+.axis{
+  path,
+  line{
+    fill:none;
+    stroke:$black;
+    shape-rendering:crispEdges;
+  }
+  &.xAxis .axisLabel{
+    text-anchor:middle;
+  }
+  &.yAxis .axisLabel{
+    text-anchor:middle;
+    position:relative;
+  }
+}
+
+#basicLineGraph{
+  .xAxis .tick text{
+    font-size:.8em;
+    // transform:rotate(-90deg) translate(0, -1em);
+  }
+}
+
+.y1{
+  stroke:black;
+}
+.y2{
+  stroke:red;
+}
