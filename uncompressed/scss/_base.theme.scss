@@ -19,13 +19,21 @@ h1,h2{
     font-family:$display;
     text-transform:uppercase;
     letter-spacing:.1em;
-    font-weight:400;
-    border-bottom:.2rem solid $black;
+    font-weight:900;
+    // border-bottom:.2rem solid $black;
 }
 h1{
     font-size:1.2em;
 }
 
+a{
+    text-decoration:none;
+    color:$primary;
+    transition:color .2s;
+    &:hover{
+        color:$black;
+    }
+}
 
 strong{
     font-weight:bold;

@@ -1,0 +1,147 @@
+.touche-de-rouge {
+  color: red; }
+
+::-moz-selection {
+  color: #ffffff;
+  background: #4d4d4d; }
+
+::selection {
+  color: #ffffff;
+  background: #4d4d4d; }
+
+a::-moz-selection {
+  color: #4d4d4d;
+  background: #ffffff; }
+
+a::selection {
+  color: #4d4d4d;
+  background: #ffffff; }
+
+@font-face {
+  font-family: 'iconFont';
+  src: url("../fonts/icons/icons.eot");
+  src: url("../fonts/icons/icons.eot?#iefix") format("embedded-opentype"), url("../fonts/icons/icons.woff") format("woff"), url("../fonts/icons/icons.ttf") format("truetype"), url("../fonts/icons/icons.svg#icons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+.clearfix:before,
+.clearfix:after {
+  content: ' ';
+  display: table; }
+
+.clearfix:after {
+  clear: both; }
+
+.clearfix {
+  zoom: 1; }
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+html {
+  box-sizing: border-box; }
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit; }
+
+html {
+  font-size: 100%; }
+
+html {
+  font-family: "Lato", sans-serif;
+  height: 100%; }
+
+body {
+  font-size: 62.5%;
+  margin: 0 auto;
+  height: 100%; }
+
+.mainWrapper {
+  font-size: 1.6em; }
+
+h1, h2 {
+  display: inline-block;
+  font-family: "Lato", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 900; }
+
+h1 {
+  font-size: 1.2em; }
+
+a {
+  text-decoration: none;
+  color: #00b7c6;
+  transition: color .2s; }
+  a:hover {
+    color: #4d4d4d; }
+
+strong {
+  font-weight: bold; }
+
+.mainWrapper {
+  background: #dad8d2;
+  min-height: 100%;
+  width: 100%;
+  padding: 2em; }
+
+.mainHeader {
+  font-size: 1.6em;
+  background: #4d4d4d;
+  color: #ffffff; }
+
+.mainTitle {
+  font-size: .8em;
+  font-weight: 400;
+  letter-spacing: .2em;
+  display: block;
+  padding: .5em;
+  color: #ffffff;
+  transition: color .2s; }
+  .mainTitle:hover {
+    color: #00b7c6; }
+
+.hidden {
+  display: none !important;
+  visibility: hidden; }
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto; }
+
+.invisible {
+  visibility: hidden; }
