@@ -516,8 +516,8 @@ var noQuery = (function(){
      * PUBLIC METHODS
      * 
      * Expose all our
-     * functions into
-     * the world...
+     * nice functions
+     * to the public.
      * --------------
      */
     var publicAPI = {
@@ -535,6 +535,16 @@ var noQuery = (function(){
  * Show live value
  * for the control
  * sliders.
+ *
+ * ||||||||||||||||||||||||||||
+ * NOTE:
+ * this has been added recently
+ * and in a rush. It has yet to
+ * be fully integrated into the
+ * MegaSuperSynthInputs module,
+ * but it will be soon...
+ * ||||||||||||||||||||||||||||
+ * 
  * ---------------
  */
 var controlSliderDisplay = (function(){
@@ -569,6 +579,9 @@ var controlSliderDisplay = (function(){
         target[0].textContent = outputValue;
     }
 
+    /**
+     * DUPLICATED FUNCTION: to be removed
+     */
     function _handleWaveType(int){
         var rawWaveValue = parseInt(int);
         switch (rawWaveValue) {
@@ -594,15 +607,29 @@ var controlSliderDisplay = (function(){
     return publicAPI;
 })();
 
+/**
+ * -------------------
+ * INIT
+ *
+ * Initialise all our
+ * functions (so stuff
+ * actually happens)
+ * -------------------
+ */
 
+// Set our DOM elements:
 var controlsWrapper = document.getElementById('synthControls');
 var keysWrapper = document.getElementById('synthKeys');
 
-var // determine if Web Audio API is available
-    contextClass = (window.AudioContext || window.webkitAudioContext);
+// determine if Web Audio API is available
+// (`contextClass` will return `false` if
+// the API is not supported).
+var contextClass = (window.AudioContext || window.webkitAudioContext);
+
 
 if (contextClass) {
+    // Initialise the audio functions
     var newSynth = MegaSuperSynth(contextClass);
+    // Initialise the input controls
     var newSynthInputs = MegaSuperSynthInputs(controlsWrapper,keysWrapper);
-    // var newControlSliderDisplay = controlSliderDisplay();
 }
