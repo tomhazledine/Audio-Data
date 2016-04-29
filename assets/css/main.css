@@ -98,16 +98,389 @@ a {
 strong {
   font-weight: bold; }
 
+input[type="range"].pianoController {
+  display: block;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1em;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: #4d4d4d;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset #343434 -0.5em 0.5em 0 0;
+  border-radius: .5em; }
+  input[type="range"].pianoController:focus {
+    outline: none; }
+  input[type="range"].pianoController::-moz-focus-outer {
+    border: 0; }
+
+input[type="range"].pianoController::-moz-range-track {
+  border: inherit;
+  background: transparent;
+  border-top: 2em solid transparent;
+  border-bottom: 2em solid transparent; }
+
+input[type="range"].pianoController::-ms-track {
+  border: inherit;
+  color: transparent;
+  /* don't drawn vertical reference line */
+  background: transparent;
+  border-top: 2em solid transparent;
+  border-bottom: 2em solid transparent; }
+
+input[type="range"].pianoController::-ms-fill-lower,
+input[type="range"]::-ms-fill-upper {
+  background: transparent; }
+
+input[type="range"].pianoController::-ms-tooltip {
+  display: none; }
+
+input[type="range"].pianoController::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 2em;
+  height: 2em;
+  border: none;
+  border-radius: 0;
+  background: #00b7c6;
+  cursor: pointer;
+  height: 4em;
+  box-shadow: inset #00b7c6 0 1em 0 0, inset #008893 0 1.2em 0 0, inset #009fad 0 1.4em 0 0, inset #00cfe0 0 1.5em 0 0, inset #00b7c6 0 1.8em 0 0, inset #008893 0 2em 0 0, inset #009fad 0 2.1em 0 0, inset #00cfe0 0 2.2em 0 0, inset #00b7c6 0 2.5em 0 0, inset #008893 0 2.7em 0 0, inset #009fad 0 2.9em 0 0, inset #00cfe0 0 3em 0 0, rgba(0, 0, 0, 0.2) -0.5em 0.5em 0 0;
+  border-bottom: 0.2em solid #008893;
+  border-left: 0.2em solid #008893;
+  border-top: 0.2em solid #00cfe0;
+  border-right: 0.2em solid #00cfe0; }
+
+input[type="range"].pianoController::-moz-range-thumb {
+  width: 2em;
+  height: 2em;
+  border: none;
+  border-radius: 0;
+  background: #00b7c6;
+  cursor: pointer;
+  height: 4em;
+  box-shadow: inset #00b7c6 0 1em 0 0, inset #008893 0 1.2em 0 0, inset #009fad 0 1.4em 0 0, inset #00cfe0 0 1.5em 0 0, inset #00b7c6 0 1.8em 0 0, inset #008893 0 2em 0 0, inset #009fad 0 2.1em 0 0, inset #00cfe0 0 2.2em 0 0, inset #00b7c6 0 2.5em 0 0, inset #008893 0 2.7em 0 0, inset #009fad 0 2.9em 0 0, inset #00cfe0 0 3em 0 0, rgba(0, 0, 0, 0.2) -0.5em 0.5em 0 0;
+  border-bottom: 0.2em solid #008893;
+  border-left: 0.2em solid #008893;
+  border-top: 0.2em solid #00cfe0;
+  border-right: 0.2em solid #00cfe0; }
+
+input[type="range"].pianoController::-ms-thumb {
+  width: 1em;
+  height: 2em;
+  border-radius: 0;
+  border: 0;
+  background: #00b7c6;
+  height: 4em;
+  box-shadow: inset #00b7c6 0 1em 0 0, inset #008893 0 1.2em 0 0, inset #009fad 0 1.4em 0 0, inset #00cfe0 0 1.5em 0 0, inset #00b7c6 0 1.8em 0 0, inset #008893 0 2em 0 0, inset #009fad 0 2.1em 0 0, inset #00cfe0 0 2.2em 0 0, inset #00b7c6 0 2.5em 0 0, inset #008893 0 2.7em 0 0, inset #009fad 0 2.9em 0 0, inset #00cfe0 0 3em 0 0, rgba(0, 0, 0, 0.2) -0.5em 0.5em 0 0;
+  border-bottom: 0.2em solid #008893;
+  border-left: 0.2em solid #008893;
+  border-top: 0.2em solid #00cfe0;
+  border-right: 0.2em solid #00cfe0; }
+
 .mainWrapper {
-  background: #dad8d2;
   min-height: 100%;
   width: 100%;
   padding: 2em; }
 
+.keyboard {
+  padding-top: 5em;
+  text-align: center; }
+  .keyboard h1 {
+    font-size: 2em; }
+
+.mainContentInner {
+  width: 60%;
+  background: #efeeeb;
+  margin: 3em auto 3em;
+  padding: 3em;
+  text-align: left; }
+  @media (max-width: 800px) {
+    .mainContentInner {
+      width: 100%; } }
+  .mainContentInner h1 {
+    font-size: 2em;
+    text-align: center;
+    padding-bottom: 1em; }
+  .mainContentInner p {
+    width: 28em;
+    margin: 0 auto; }
+    @media (max-width: 570px) {
+      .mainContentInner p {
+        min-width: 0em;
+        width: 90%; } }
+
+.nav-button-prev {
+  background: #c2beb2; }
+  .nav-button-prev:after {
+    display: none; }
+
+.nav-button-next {
+  background: #c2beb2;
+  text-align: left; }
+  .nav-button-next:before {
+    display: none; }
+
+.pianoWrapper {
+  font-size: 20px;
+  width: 100%;
+  padding-top: 2em;
+  left: 0;
+  position: relative;
+  z-index: 1; }
+  @media (max-width: 866px) {
+    .pianoWrapper {
+      font-size: 10px; } }
+  .pianoWrapper .controls {
+    height: 10em;
+    overflow: hidden; }
+    .pianoWrapper .controls .controlStrip {
+      width: 50%;
+      float: left;
+      height: 2em; }
+      .pianoWrapper .controls .controlStrip span {
+        display: block;
+        width: 100%; }
+  .pianoWrapper .piano {
+    width: 43em;
+    height: 14em;
+    margin: 0 auto 4em;
+    background: #6f6f6f;
+    color: #fff;
+    padding: 1em;
+    border-radius: 1em;
+    box-shadow: #555555 0 0.7em 0 0, #d5d5d5 0 1em 0 0, #f2f2f2 0.2em 1.5em 0 0; }
+  .pianoWrapper .octave-wrapper {
+    width: 35em;
+    margin: 1.8em 0 0 5.8em; }
+  .pianoWrapper .octave {
+    float: left;
+    width: 35em;
+    color: #4d4d4d;
+    position: relative;
+    z-index: 1000;
+    margin: 0 auto;
+    padding: 0 0 1.6em 0;
+    border-radius: 0 0 .5em .5em;
+    background: #6f6f6f;
+    box-shadow: -0.4em 0 0 0 #555555, 0.2em 0 0 0 #959595; }
+    .pianoWrapper .octave:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -.2em;
+      width: 35.3em;
+      height: 0;
+      z-index: 150;
+      border-top: 0.5em solid #00b7c6;
+      border-right: .2em solid transparent;
+      border-left: .2em solid transparent; }
+  .pianoWrapper .piano-key {
+    display: block;
+    position: relative;
+    float: left;
+    height: 6.25em;
+    text-align: center;
+    padding: 0 0 0 0;
+    margin: 0;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none; }
+    .pianoWrapper .piano-key span {
+      display: none;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none; }
+    .pianoWrapper .piano-key.natural {
+      top: 0.5em;
+      z-index: 100;
+      width: 2.5em;
+      height: 10em;
+      background: #f2f2f2;
+      border-radius: 0 0 0.5em 0.5em;
+      border-right: solid white 0.2em;
+      border-bottom: solid white 0.2em;
+      border-left: solid #d9d9d9 0.2em;
+      box-shadow: -0.2em 0.8em 0 -0.2em #555555; }
+      .pianoWrapper .piano-key.natural.pressed {
+        border-bottom: solid #cccccc 0.2em;
+        border-right: solid #cccccc 0.8em;
+        border-left: solid #cccccc 0.2em;
+        box-shadow: -0.2em 0.6em 0 -0.2em #555555; }
+        .pianoWrapper .piano-key.natural.pressed:before {
+          -webkit-user-select: none;
+             -moz-user-select: none;
+              -ms-user-select: none;
+                  user-select: none;
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          content: "";
+          width: 0;
+          height: 70%;
+          z-index: 225;
+          border-left: solid #cccccc 2em;
+          border-bottom: solid transparent 1em; }
+    .pianoWrapper .piano-key.accidental {
+      width: 1.25em;
+      top: .3em;
+      margin: 0 -0.625em;
+      z-index: 200;
+      background: #808080;
+      background-image: linear-gradient(#808080 60%, #4d4d4d 90%);
+      border-radius: 0.2em;
+      border: solid #4d4d4d 0.2em;
+      border-bottom: solid #4d4d4d 0.8em;
+      box-shadow: inset 0 -0.1em #fff; }
+      .pianoWrapper .piano-key.accidental:before {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        content: "";
+        width: 0;
+        height: 50%;
+        z-index: 250;
+        border-left: solid #4d4d4d 1.05em;
+        border-bottom: solid transparent 1em; }
+      .pianoWrapper .piano-key.accidental:after {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        pointer-events: none;
+        display: block;
+        position: relative;
+        left: -1em;
+        top: 0;
+        content: "";
+        width: 0em;
+        height: 5.95em;
+        z-index: 150;
+        border-right: solid #cccccc 0.8em;
+        border-bottom: solid transparent .8em; }
+      .pianoWrapper .piano-key.accidental.pressed {
+        top: .4em;
+        height: 6.15em;
+        border-bottom: solid #4d4d4d 0.4em;
+        background-image: linear-gradient(#808080 30%, #4d4d4d 60%); }
+        .pianoWrapper .piano-key.accidental.pressed:before {
+          height: 30%; }
+        .pianoWrapper .piano-key.accidental.pressed:after {
+          top: -.1em;
+          left: -0.6em;
+          border-right: solid #cccccc 0.4em;
+          border-bottom: solid transparent .5em; }
+
+/*/ Synth Build
+// Keyboard
+$moog-key:red;//$highlight;
+$moog-bg:blue;//$primary;
+$moog-hover:yellow;//$secondary;
+.moog-keys{
+  width:100%;
+  height:10em;
+  margin:1em 0 0 0;
+  cursor:pointer;
+  .moog-key{
+    position:relative;
+    z-index:50;
+    width:7.14%;
+    height:100%;
+    background:$moog-key;
+    float:left;
+    margin:0;
+    border:.2em solid $moog-bg;
+    border-top:0em solid $moog-bg;
+    border-bottom:0em solid $moog-bg;
+    &.accidental{
+      z-index:100;
+      height:5em;
+      width:2.5em;
+      margin:0 -1.25em;
+      border:.4em solid $moog-bg;
+      border-top:0em solid $moog-bg;
+    }
+    &:hover{
+      background:$moog-hover;
+    }
+    &.pressed{
+      background:blue;
+    }
+  }//key
+}//piano-keys
+//*/
+.controls {
+  max-width: 40em;
+  margin: 0 auto; }
+  .controls .controlStripOuter {
+    width: 16.66%;
+    float: left;
+    margin: 2em 0;
+    padding: 0 1em; }
+  .controls .controlStrip {
+    font-size: .5em;
+    width: 5.5em;
+    height: 10em;
+    margin: 0 auto; }
+    .controls .controlStrip .controlStripInner {
+      width: 10em;
+      height: 5.5em;
+      position: relative;
+      top: 100%;
+      -webkit-transform: rotate(270deg);
+              transform: rotate(270deg);
+      -webkit-transform-origin: 0% 0%;
+              transform-origin: 0% 0%; }
+    .controls .controlStrip input[type="range"] {
+      display: block;
+      width: 10em;
+      font-size: 1em;
+      position: absolute;
+      top: 2em;
+      left: 0; }
+  .controls .controlStripOuter > span {
+    display: block;
+    line-height: 1;
+    font-family: "Lato", sans-serif;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-size: .8em;
+    padding-bottom: 1em; }
+  .controls .controlStripOuter > span.controlValue {
+    display: inline-block;
+    min-width: 3em;
+    background: #00b7c6;
+    color: #fff;
+    line-height: 1;
+    padding: .4em .5em .4em .5em;
+    position: relative;
+    margin-top: 1em; }
+    .controls .controlStripOuter > span.controlValue:before {
+      content: "";
+      display: block;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      border-bottom: 0.5em solid #00b7c6;
+      border-left: .5em solid transparent;
+      border-right: .5em solid transparent;
+      margin-left: -.5em; }
+
 .mainHeader {
   font-size: 1.6em;
   background: #4d4d4d;
-  color: #ffffff; }
+  color: #fff; }
 
 .mainTitle {
   font-size: .8em;
@@ -115,7 +488,7 @@ strong {
   letter-spacing: .2em;
   display: block;
   padding: .5em;
-  color: #ffffff;
+  color: #fff;
   transition: color .2s; }
   .mainTitle:hover {
     color: #00b7c6; }

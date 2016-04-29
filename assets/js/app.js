@@ -20082,2304 +20082,616 @@ var DrawScatter = function drawScatter(options){
 
 
 }
-
-var FinishingPositions = function finishingPositions(settings){
-
-    /**
-     * --------------------
-     * PARSE THE DATA
-     *
-     * Make sure columns
-     * used return integers
-     * and not strings.
-     * --------------------
-     */
-    function _type(data){
-        for (i = 0; i < settings.xColumn.length; i++) {
-            // X Axis uses dates in YYYY format
-            data[settings.xColumn[i]] = new Date(data[settings.xColumn[i]],0,1);
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            // Y Axis has multiple columns that must be integers, not strings
-            data[settings.yColumn[i]] = +data[settings.yColumn[i]];
-        }
-        return data;
-    }
-
-    /**
-     * ----------------------------
-     * SIZES
-     *
-     * Find the w/h for the chart's
-     * wrapper, and calculate the
-     * inner w/h using the margins.
-     * ----------------------------
-     */
-    var wrapperWidth = parseInt(settings.wrapper.style('width')),
-        wrapperHeight = parseInt(settings.wrapper.style('height')),
-        height = wrapperHeight - settings.margin.top - settings.margin.bottom,
-        width = wrapperWidth - settings.margin.left - settings.margin.right;
-
-    /**
-     * ------------------------
-     * SCALES
-     *
-     * Set the x & y scales.
-     * ------------------------
-     */
-    var xScale = d3.time.scale().range([0, width]),
-        yScale = d3.scale.linear().range([height, 0]);
-
-    /**
-     * --------------------
-     * DRAW SVG
-     *
-     * Build the containing
-     * SVG for our chart.
-     * Build and position
-     * the inner group.
-     * --------------------
-     */
-    var scatterSvg = settings.wrapper.append('svg')
-        .attr('width',wrapperWidth)
-        .attr('height',wrapperHeight)
-        .classed('chartSvg',true);
-
-    var svgInner = scatterSvg.append('g')
-        .attr('transform','translate(' + settings.margin.left + ', ' + settings.margin.top + ')')
-        .attr('width',width)
-        .attr('height',height)
-        .classed('chartWrapper',true);
-
-    /**
-     * Background
-     */
-    var bgWrap = svgInner.append('g')
-        .classed('background',true);
-    
-    var barNumber = 6;
-    var barHeight = height / barNumber;
-    
-    for (i = 0; i < barNumber; i++) {
-        var bgClass = 'bgBar';
-        if ((i - 1) % 2){
-            bgClass = bgClass + ' odd';
-        }
-        bgWrap.append('line')
-            .attr('x1',0)
-            .attr('x2',width)
-            .attr('y1',(barHeight * i))
-            .attr('y2',(barHeight * i))
-            .classed(bgClass, true);
-    }
-
-    /**
-     * ---------------
-     * AXES
-     *
-     * Draw the x axis
-     * & y axis.
-     * ---------------
-     */
-    var axesGroup = scatterSvg.append('g')
-        .attr('transform', 'translate(' + settings.margin.left + ',' + settings.margin.top + ')')
-        .classed('axesWrapper',true);
-    var xAxisG = axesGroup.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .classed('axis xAxis',true);
-    var yAxisG = axesGroup.append('g')
-        .classed('axis yAxis',true);
-    
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        .tickFormat(function(d){return d3.time.format('%Y')(new Date(d));});
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        .tickValues([1,2,3,4,5,6])
-        .tickFormat(d3.format());
-
-    /**
-     * Axes Labels
-     */
-
-    var xLabelOffset = 35;
-    var xLabelText = 'Year';
-    var yLabelOffset = -30;
-    // var yLabelText = 'Finishing Position';
-
-    var yAxisLabel = yAxisG.append('text')
-        .classed('axisLabel',true)
-        .attr('transform','translate(' + yLabelOffset + ',' + (height / 2) + ') rotate(-90)');
-        // .text(yLabelText);
-
-    /**
-     * Tooltip
-     */
-    // var tooltip = d3.select('.tooltip');
-    var tooltipsWrapper = d3.select('.chart1tooltips');
-
-    /**
-     * -------------------------
-     * PUT IT ALL TOGETHER
-     *
-     * Using all our vars and
-     * settings, build the chart
-     * from the given dataset.
-     * -------------------------
-     */
-    function _renderChart(data){
-        
-        /**
-         * -----------------
-         * DATA MIN MAX
-         * 
-         * Get the min & max
-         * values for x & y
-         * columns.
-         * -----------------
-         */
-        
-        // Get the Maximum values
-        var xColumnMaximums = [];
-        var yColumnMaximums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMaximums.push(d3.max(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMaximums.push(d3.max(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMax = Math.max.apply(null,xColumnMaximums),
-            yMax = Math.max.apply(null,yColumnMaximums);
-        // console.log('xMax = ' + xMax);
-        // console.log('yMax = ' + yMax);
-
-        // Get the Minimum values
-        var xColumnMinimums = [];
-        var yColumnMinimums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMinimums.push(d3.min(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMinimums.push(d3.min(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMin = Math.min.apply(null,xColumnMinimums),
-            yMin = Math.min.apply(null,yColumnMinimums);
-        // console.log('xMin = ' + xMin);
-        // console.log('yMin = ' + yMin);
-
-        /**
-         * -------
-         * DOMAINS
-         * -------
-         */
-        var xScaleExtent = d3.extent(data, function (d){ return d[settings.xColumn]; });
-        var yScaleExtent = d3.extent(data, function (d){ return d[settings.yColumn2]; });
-        
-        xScale.domain([xMin,xMax]);
-        yScale.domain([7,1]);
-
-        /**
-         * AXES
-         */
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        /**
-         * CREATE SHAPES
-         */
-        
-        // Setup vars to handle the `for` statement
-        var circles = [];
-        var paths = [];
-        var lines = [];
-        var entryWrapper = [];
-        var tooltips = [];
-        var hoverTargets = [];
-
-        for (i = 0; i < settings.yColumn.length; i++) {
-
-            entryWrapper[i] = svgInner.append('g')
-                .classed('entry entry' + i + ' entry' + settings.yColumn[i],true);
-
-            paths[i] = entryWrapper[i].append('path');
-            paths[i + settings.yColumn.length] = entryWrapper[i].append('path');
-
-            /**
-             * CIRCLES
-             */
-            circles[i] = entryWrapper[i].selectAll('circle').data(data);
-
-            circles[i].enter().append('circle');
-
-            circles[i]
-                .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-                .attr('cx',function (d){ return xScale(d[settings.xColumn[0]]); })
-                .attr('cy',function (d){ return yScale(d[settings.yColumn[i]]); })
-                .attr('r',function(d){ return settings.circleRadius; })
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartcircle circle' + settings.yColumn[i], true);
-
-            circles[i].exit().remove();
-    
-            /**
-             * LINES
-             */
-            lines[i] = d3.svg.line()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            paths[i]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline line' + settings.yColumn[i], true)
-                .attr('stroke-width','1px');
-
-            paths[i + settings.yColumn.length]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline chartline_hover line' + settings.yColumn[i], true)
-                .attr('stroke-width','10px');
-
-            /**
-             * TOOLTIPS
-             */
-            tooltips[i] = tooltipsWrapper.append('div')
-                .classed('chart1tooltip ' + settings.yColumn[i],true);
-                // .text(settings.yColumn[i])
-            
-            tooltips[i].append('div')
-                .classed('colourBox colourBox_' + settings.yColumn[i], true);
-
-            tooltips[i].append('p')
-                .classed('labelBox labelBox_' + settings.yColumn[i], true)
-                .text(settings.yColumn[i]);
-
-            /**
-             * TRANSITIONS
-             */
-            paths[i + settings.yColumn.length].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            paths[i + settings.yColumn.length].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            circles[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            circles[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            function activeOn(subject){
-                var nation = subject.attr('data-nation');
-
-                var targetClass = '.passive.entry' + nation;
-                var target = d3.select(targetClass);
-
-                var targetTooltipClass = '.chart1tooltip.' + nation;
-                var targetTooltip = d3.select(targetTooltipClass);
-                // tooltip.text(nation);
-                target.classed('hovering',true);
-
-                // if (target.hasClass('passive'))
-
-                targetTooltip
-                    // .text(nation)
-                    // .classed(nation,true)
-                    .classed('hovering',true);
-                    // .style('left', (d3.event.pageX + 20) + 'px')
-                    // .style('top', (d3.event.pageY) + 'px');
-            }
-
-            function activeOff(subject){
-                var nation = subject.attr('data-nation');
-                var targetClass = '.passive.entry' + nation;
-                var target = d3.select(targetClass);
-                target.classed('hovering',false);
-
-                var targetTooltipClass = '.chart1tooltip.' + nation;
-                var targetTooltip = d3.select(targetTooltipClass);
-                targetTooltip
-                    // .text('nothing selected')
-                    // .classed(nation,false)
-                    .classed('hovering',false);
-            }
-        }
-
-        /**
-         * HOVER TARGETS
-         */
-        // var hoverTargetWidth = width / settings.xColumn[0].length;
-        // var hoverTargetNumber = settings.xColumn[0].length;
-        // var testVar = data[settings.xColumn[0]];
-        // console.log(testVar);
-        
-        // var hoverTargets = svgInner.selectAll('rect')
-        //   .data(data)
-        //   .enter()
-        //     .append('rect')
-        //     .attr("x", function(datum, index) { return xScale(index); })
-        //     .attr("y", 0)
-        //     .attr('width',hoverTargetWidth)
-        //     .attr('height',height)
-        //     .classed('hoverTarget',true);
-        
-        
-
-
-
-
-
-
-
-        // hoverTargets = svgInner.selectAll('rect').data(data);
-
-        // hoverTargets.enter().append('rect');
-
-        // function getit(d){ return d[settings.xColumn[0]]; }
-
-        // var hoverTargetNumber = getit();
-        // console.log(hoverTargetNumber);
-
-        // hoverTargets
-        //     // .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-        //     .attr('x',function (d){ return xScale(d[settings.xColumn[0]]); })
-        //     .attr('y',0)
-        //     // .attr('data-nation',settings.yColumn[i])
-        //     .classed('hoverTarget', true);
-
-        // hoverTargets.exit().remove();
-
-        
-
-
-
-
-
-
-
-        // var hoverTargets = svgInner.append('g')
-        //     .classed('hoverTargets',true);
-        
-        // // var hoverTargetNumber = settings.xColumn[0].length;
-        // // var barHeight = height / barNumber;
-        
-        // for (i = 0; i < barNumber; i++) {
-        //     // var hoverTargetWidth = width / hoverTargetNumber;
-            
-        //     hoverTargets.append('rect')
-        //         .classed('hoverTarget',true)
-        //         .attr('width',hoverTargetWidth)
-        //         .attr('height',height)
-        //         .attr('transform','translate(' + (hoverTargetWidth * i) + ',0)');
-        // }
-
-    }
-
-    /**
-     * ----------------------
-     * INITIALISE THE CHART
-     *
-     * Get the data, parse it
-     * using _type, then draw
-     * the chart using
-     * _renderChart.
-     * ----------------------
-     */
-    d3.csv(settings.dataSrc, _type, _renderChart);
-
-    
-
-
-}
-
-var testWrap1 = $('#chart1');
-
-if(testWrap1.length) {
-    var chartOne = FinishingPositions({
-        dataSrc  : '/data/resultspositions.csv',
-        wrapper  : d3.select('#chart1'),
-        margin   : { top: 20, right: 20, bottom: 30, left: 15 },
-        xColumn  : ['year'],
-        yColumn  : ['england','scotland','ireland','wales','france','italy'],
-        hasTimeX : true,
-        hasTimeY : false,
-        circleRadius : 3
-    });
-}
-function activateLines(options){
-    settings = [];
-
-    for (i = 0; i < options.length; i++) {
-
-        /**
-         * PARSE OPTIONS
-         */
-        settings[i] = {
-            active: _checkFalse(options[i][0]),
-            passive: _checkFalse(options[i][1]),
-            target: options[i][2]
-        }
-
-        /**
-         * FIND ELEMENTS
-         */
-        var entryClass = '.entry' + settings[i].target;
-        var entry = d3.select(entryClass);
-        var tooltipClass = '.chart1tooltip.' + settings[i].target;
-        var tooltip = d3.select(tooltipClass);
-        // var entries = $('.entry');
-
-        /**
-         * APPLY STATES
-         */
-        if (settings[i].passive) {
-            entry.classed('passive',true);
-            tooltip.classed('passive',true);
-        } else {
-            entry.classed('passive',false);
-            tooltip.classed('passive',false);
-        }
-
-        if (settings[i].active) {
-            entry.classed('active',true);
-            tooltip.classed('active',true);
-        } else {
-            entry.classed('active',false);
-            tooltip.classed('active',false);
-        }
-
-        // console.log(entry);
-
-    }
-
-
-    /**
-     * HELPERS
-     */
-    function _checkFalse(target) {
-        if (target) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
-function activateCaptions(target){
-    var targetClass = '.chart1caption' + target;
-    var targetCaption = $(targetClass);
-    var captions = $('.chart1caption');
-
-    captions.removeClass('active');
-    targetCaption.addClass('active');
-    // console.log('the wrapper:');
-    // console.log(wrapper);
-    // console.log('the target:');
-    // console.log(target);
-}
-
-var buttons = $('.triggerchart1'),
-    button1 = $('.triggerchart1.one'),
-    button2 = $('.triggerchart1.two'),
-    button3 = $('.triggerchart1.three'),
-    button4 = $('.triggerchart1.four');
-
-button1.on('click',function(){
-    buttons.removeClass('active');
-    $(this).addClass('active');
-    
-    var target = $(this).data('target');
-    activateCaptions(target);
-
-    activateLines( [
-            [1,0,'england'],
-            [0,0,'italy'],
-            [0,0,'wales'],
-            [0,0,'scotland'],
-            [0,0,'ireland'],
-            [0,0,'france']
-    ]);
-});
-
-button2.on('click',function(){
-    buttons.removeClass('active');
-    $(this).addClass('active');
-    
-    var target = $(this).data('target');
-    activateCaptions(target);
-    activateLines( [
-            [0,1,'england'],
-            [1,0,'italy'],
-            [0,0,'wales'],
-            [0,0,'scotland'],
-            [0,0,'ireland'],
-            [0,0,'france']
-    ]);
-});
-
-button3.on('click',function(){
-    buttons.removeClass('active');
-    $(this).addClass('active');
-    
-    var target = $(this).data('target');
-    activateCaptions(target);
-    activateLines( [
-            [0,1,'england'],
-            [0,1,'italy'],
-            [1,0,'wales'],
-            [0,0,'scotland'],
-            [0,0,'ireland'],
-            [0,0,'france']
-    ]);
-});
-
-button4.on('click',function(){
-    buttons.removeClass('active');
-    $(this).addClass('active');
-    
-    var target = $(this).data('target');
-    activateCaptions(target);
-    activateLines( [
-            [0,1,'england'],
-            [0,1,'italy'],
-            [0,1,'wales'],
-            [0,1,'scotland'],
-            [0,1,'ireland'],
-            [0,1,'france']
-    ]);
-});
-var DrawPDArea = function drawPDArea(options){
-
-    /**
-     * ---------------------------------
-     * OPTIONS
-     * 
-     * Use fallback values if options
-     * are not set in the function call,
-     * otherwise use defined options.
-     * ---------------------------------
-     */
-    
-    /**
-     * FALLBACKS
-     */
-    var settings = {
-        dataSrc      : '/week_temp.csv',
-        wrapper      : d3.select('body'),
-        margin       : { top: 20, right: 20, bottom: 20, left: 20 },
-        xColumn      : ['xColumn'],
-        yColumn      : ['yColumn'],
-        hasTimeX     : false,
-        hasTimeY     : false,
-        circleRadius : 3
-    };
-
-    /**
-     * SET OPTIONS (if declared)
-     */
-    if (options !== undefined) {
-        if ( options.dataSrc      !== undefined ) { settings.dataSrc      = options.dataSrc;      }
-        if ( options.wrapper      !== undefined ) { settings.wrapper      = options.wrapper;      }
-        if ( options.margin       !== undefined ) { settings.margin       = options.margin;       }
-        if ( options.xColumn      !== undefined ) { settings.xColumn      = options.xColumn;      }
-        if ( options.yColumn      !== undefined ) { settings.yColumn      = options.yColumn;      }
-        if ( options.hasTimeX     === true      ) { settings.hasTimeX     = true;                 }
-        if ( options.hasTimeY     === true      ) { settings.hasTimeY     = true;                 }
-    }
-
-    /**
-     * --------------------
-     * PARSE THE DATA
-     *
-     * Make sure columns
-     * used return integers
-     * and not strings.
-     * --------------------
-     */
-    function _type(data){
-        for (i = 0; i < settings.xColumn.length; i++) {
-            if (settings.hasTimeX) {
-                // Just handles data in YYYY format:
-                data[settings.xColumn[i]] = new Date(data[settings.xColumn[i]],0,1);
-            } else {
-                data[settings.xColumn[i]] = +data[settings.xColumn[i]];
-            }
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            data[settings.yColumn[i]] = +data[settings.yColumn[i]];
-        }
-        return data;
-    }
-
-    /**
-     * ----------------------------
-     * SIZES
-     *
-     * Find the w/h for the chart's
-     * wrapper, and calculate the
-     * inner w/h using the margins.
-     * ----------------------------
-     */
-    var wrapperWidth = parseInt(settings.wrapper.style('width')),
-        wrapperHeight = parseInt(settings.wrapper.style('height')),
-        height = wrapperHeight - settings.margin.top - settings.margin.bottom,
-        width = wrapperWidth - settings.margin.left - settings.margin.right;
-
-    /**
-     * ------------------------
-     * SCALES
-     *
-     * Set the x & y scales.
-     * ------------------------
-     */
-    var xScale = d3.time.scale().range([0, width]),
-        yScale = d3.scale.linear().range([height, 0]);
-
-    /**
-     * --------------------
-     * DRAW SVG
-     *
-     * Build the containing
-     * SVG for our chart.
-     * Build and position
-     * the inner group.
-     * --------------------
-     */
-    var scatterSvg = settings.wrapper.append('svg')
-        .attr('width',wrapperWidth)
-        .attr('height',wrapperHeight)
-        .classed('chartSvg',true);
-
-    var svgInner = scatterSvg.append('g')
-        .attr('transform','translate(' + settings.margin.left + ', ' + settings.margin.top + ')')
-        .attr('width',width)
-        .attr('height',height)
-        .classed('chartWrapper',true);
-
-    /**
-     * Background
-     */
-    var bgWrap = svgInner.append('g')
-        .classed('background',true);
-    
-    var barNumber = 1;
-    var barHeight = height / barNumber;
-    
-    for (i = 0; i < barNumber; i++) {
-        var bgClass = 'bgBar';
-        if ((i - 1) % 2){
-            bgClass = bgClass + ' odd';
-        }
-        bgWrap.append('rect')
-            .attr('width',width)
-            .attr('height',barHeight)
-            .classed(bgClass, true)
-            .attr('transform','translate(0,' + (barHeight * i) + ')');
-    }
-
-    /**
-     * ---------------
-     * AXES
-     *
-     * Draw the x axis
-     * & y axis.
-     * ---------------
-     */
-    var axesGroup = scatterSvg.append('g')
-        .attr('transform', 'translate(' + settings.margin.left + ',' + settings.margin.top + ')')
-        .classed('axesWrapper',true);
-    var xAxisG = axesGroup.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .classed('axis xAxis',true);
-    var yAxisG = axesGroup.append('g')
-        .classed('axis yAxis',true);
-    var zAxisG = axesGroup.append('g')
-        .classed('axis zAxis',true);
-    
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        // .ticks(15)
-        .tickFormat(function(d){return d3.time.format('%Y')(new Date(d));});
-        // .tickValues(d3.time.days(t1, t2).filter(function(d, i){ return !(i % 2); }))
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        // .tickValues([1,2,3,4,5,6])
-        .tickFormat(d3.format());
-
-    var zAxis = d3.svg.axis()
-        .scale(xScale)
-        // .ticks('%Y')
-        .tickFormat(d3.time.format('%Y'));
-
-    /**
-     * Axes Labels
-     */
-
-    var xLabelOffset = 35;
-    var xLabelText = 'Year';
-    var yLabelOffset = -35;
-    var yLabelText = 'Points Difference';
-
-    var yAxisLabel = yAxisG.append('text')
-        .classed('axisLabel',true)
-        .attr('transform','translate(' + yLabelOffset + ',' + (height / 2) + ') rotate(-90)')
-        .text(yLabelText);
-
-    /**
-     * Tooltip
-     */
-    var tooltip = d3.select('.tooltip');
-
-    /**
-     * -------------------------
-     * PUT IT ALL TOGETHER
-     *
-     * Using all our vars and
-     * settings, build the chart
-     * from the given dataset.
-     * -------------------------
-     */
-    function _renderChart(data){
-        
-        /**
-         * -----------------
-         * DATA MIN MAX
-         * 
-         * Get the min & max
-         * values for x & y
-         * columns.
-         * -----------------
-         */
-        
-        // Get the Maximum values
-        var xColumnMaximums = [];
-        var yColumnMaximums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMaximums.push(d3.max(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMaximums.push(d3.max(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMax = Math.max.apply(null,xColumnMaximums),
-            yMax = Math.max.apply(null,yColumnMaximums);
-        // console.log('xMax = ' + xMax);
-        // console.log('yMax = ' + yMax);
-
-        // Get the Minimum values
-        var xColumnMinimums = [];
-        var yColumnMinimums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMinimums.push(d3.min(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMinimums.push(d3.min(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMin = Math.min.apply(null,xColumnMinimums),
-            yMin = Math.min.apply(null,yColumnMinimums);
-        // console.log('xMin = ' + xMin);
-        // console.log('yMin = ' + yMin);
-
-        /**
-         * -------
-         * DOMAINS
-         * -------
-         */
-        var xScaleExtent = d3.extent(data, function (d){ return d[settings.xColumn]; });
-        var yScaleExtent = d3.extent(data, function (d){ return d[settings.yColumn2]; });
-        
-        xScale.domain([xMin,xMax]);
-        yScale.domain([yMin,yMax]);
-
-        /**
-         * AXES
-         */
-        // var xLength = data[settings.xColumn];
-        // console.log(xLength);
-
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        // var xLength = xMax - xMin;
-        // var yearMax = d3.time.format('%Y')(new Date(xMax));
-        // var yearMin = d3.time.format('%Y')(new Date(xMin));
-        // var yearCount = yearMax - yearMin;
-        // zAxis.ticks(yearCount);
-
-        zAxisG.call(zAxis);
-        zAxisG
-            .attr('transform','translate(0,' + yScale(0) + ')');
-
-        /**
-         * CREATE SHAPES
-         */
-        var circles = [];
-        var paths = [];
-        var lines = [];
-        var areas = [];
-        var areaShape = [];
-        var entryWrapper = [];
-
-        for (i = 0; i < settings.yColumn.length; i++) {
-
-            entryWrapper[i] = svgInner.append('g')
-                .classed('entry entry' + i + ' entry' + settings.yColumn[i],true);
-
-            /**
-             * CIRCLES
-             */
-            circles[i] = entryWrapper[i].selectAll('circle').data(data);
-
-            circles[i].enter().append('circle');
-
-            circles[i]
-                .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-                .attr('cx',function (d){ return xScale(d[settings.xColumn[0]]); })
-                .attr('cy',function (d){ 
-                    if (d[settings.yColumn[i]] != null || !notNaN(d[settings.yColumn[i]])) {
-                        return yScale(d[settings.yColumn[i]]);
-                    } else {
-                        return 7;
-                    }
-                })
-                .attr('r',function(d){
-                    if (d[settings.yColumn[i]] != null) {
-                        return settings.circleRadius;
-                    } else {
-                        return 0;
-                    }
-                })
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartcircle circle' + settings.yColumn[i], true);
-
-            circles[i].exit().remove();
-    
-            /**
-             * LINES
-             */
-            
-            paths[i] = entryWrapper[i].append('path');
-
-            lines[i] = d3.svg.line()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            paths[i]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline line' + settings.yColumn[i], true)
-                .attr('stroke-width','1px');
-
-            /**
-             * AREAS
-             */
-            
-            areas[i] = entryWrapper[i].append('path');
-
-            areaShape[i] = d3.svg.area()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y0(function(d){ return yScale(0); })
-                .y1(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            areas[i]
-                .attr('d',areaShape[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartarea area' + settings.yColumn[i], true);
-
-            // /**
-            //  * ZERO LINE
-            //  */
-            // var zeroLinePath = d3.svg.line()
-            //     .x(function(d){ return xScale(xMin)]; })
-            //     .y(function(d){ return yScale(0); })
-            //     .interpolate('monotone');// monotone | basis | linear | cardinal | bundle
-
-            // var zeroLine = svgInner.append('path');
-
-            // zeroLine
-            //     .attr('d',zeroLinePath);
-            //     // .attr('transform','translate(0,' + yScale(0) + ')');
-            
-            /**
-             * TRANSITIONS
-             */
-            paths[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            paths[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            circles[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            circles[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            areas[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            areas[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            function activeOn(subject){
-                var nation = subject.attr('data-nation');
-                setChartVisibleState(nation,true);
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text(nation);
-                // target.classed('active',true);
-            }
-
-            function activeOff(subject){
-                var nation = subject.attr('data-nation');
-                setChartVisibleState(nation,false);
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text('nothing selected');
-                // target.classed('active',false);
-            }
-        }
-
-    }
-
-    /**
-     * ----------------------
-     * INITIALISE THE CHART
-     *
-     * Get the data, parse it
-     * using _type, then draw
-     * the chart using
-     * _renderChart.
-     * ----------------------
-     */
-    d3.csv(settings.dataSrc, _type, _renderChart);
-    
-
-
-}
-
-var testWrap2 = $('#chart2');
-
-if (testWrap2.length) {
-    var testArea = DrawPDArea({
-        dataSrc  : '/data/resultspositions.csv',
-        wrapper  : d3.select('#chart2'),
-        margin   : { top: 20, right: 20, bottom: 30, left: 50 },
-        xColumn  : ['year'],
-        yColumn  : ['england_pd','scotland_pd','ireland_pd','wales_pd','france_pd','italy_pd'],
-        hasTimeX : true
-    });
-}
-var selectors = $('.nationPointsSelector');
-
-selectors.on('change',function(){
-	
-	var isChecked = this.checked;
-	var nation = $(this).attr('name');
-	// console.log('the ' + nation + ' checkbox status is ' + isChecked);
-	
-	setChartVisibleState(nation,isChecked);
-});
-
-function setChartVisibleState(dataSelector,status){
-	var targetClass = '.entry' + dataSelector;
-	var target = d3.select(targetClass);
-	if (status) {
-		target.classed('active',true);
-	} else {
-		target.classed('active',false);
-	}
-}
 /**
- * -----------------------------------------
- * DRAW Line
- * Draw a scatter graph using given options.
+ * ---------------------------------------------------------
+ * MEGA-SUPER-SYNTH
  *
- * options [object]:
- * 
- * dataSrc [path string]
- * wrapper [d3 selection]
- * margin [top,right,bottom,left]
- * xColumn [string]
- * yColumn [string]
- * -----------------------------------------
+ * Call this function to invoke a new instance of
+ * a synth. Simplified example:
+ *     
+ *     var newSynth = MegaSuperSynth(window.AudioContext);
+ *
+ * This function just creates the sounds. It requires the
+ * MegaSuperSynthInputs module to provide inputs.
+ *
+ * This synth is mono-phonic. This means that we create an
+ * oscillator and leave it running the entire time. Whether
+ * we hear it or not is determined by a volume control for
+ * the oscillator. When we change note, we're altering the
+ * pitch of our main oscillator. If we wanted a polyphonic
+ * synth, we'd need to initialise an oscillator for each
+ * individual note.
+ *
+ * We are using a second oscillator to add extra texture to
+ * the notes we make. This runs in tandem with the first
+ * oscillator, and is controlled by the same volume setting.
+ * ---------------------------------------------------------
  */
+var MegaSuperSynth = function megaSuperSynth(contextClass){
 
-var DrawArea = function drawLine(options){
+    var // Set up audio context (set as a param so
+        // we can use the browser-specific version)
+        context = new contextClass();
+
+    var // Controller Values
+        masterVolume = 0.5,
+        currentPitch = null,
+        currentNote = null;
+
+    var // Controller Starting Values
+        vco2PM = 2, // (PM = Pitch Multiplier)
+        vco1wav = 'sine',
+        vco2wav = 'square';
 
     /**
-     * ---------------------------------
-     * OPTIONS
+     * -----------------------------------
+     * SETTING UP AUDIO
+     *
+     * We need oscillators to create our
+     * waveforms, and amplifiers to then
+     * manipulate them.
      * 
-     * Use fallback values if options
-     * are not set in the function call,
-     * otherwise use defined options.
-     * ---------------------------------
+     * VCO = voltage controlled oscillator
+     * VCA = voltage controlled amplifier
+     *
+     * VCO & VCA are terms taken from
+     * analogue synth construction (they
+     * used real circuits and voltages)
+     * -----------------------------------
      */
     
+    // VCO #1
+    // Create an oscillator using the API:
+    var vco1 = context.createOscillator();
+    // Set the waveform for our new VCO:
+    vco1.type = vco1wav;// OPTIONS: sine, square, sawtooth, triangle
+    // Set the starting frequency for the VCO
+    vco1.frequency.value = 440.00;// 440.00Hz = "A", the standard note all orchestras tune to.
+    // Get the VCO running
+    vco1.start(0);
+
+    // VCO #2
+    // Repeat the process for our second oscillator:
+    var vco2 = context.createOscillator();
+    vco2.type = vco2wav;
+    vco2.frequency.value = 440.00;
+    vco2.start(0);
+
+    // VCA
+    // This is a gain (volume) node that
+    // will control the volume of the note.
+    var vca = context.createGain();
+    vca.gain.value = 0;
+
+    // VCO#1 VOLUME
+    // Gain node for VCO#1
+    var vco1vol = context.createGain();
+    vco1vol.gain.value = 1;
+
+    // VCO#2 VOLUME
+    // Gain node for VCO#2
+    var vco2vol = context.createGain();
+    vco2vol.gain.value = 1;
+
+    // MASTER VCA
+    // This is our overall volume control
+    // When we trigger a note, the normal
+    // VCA goes from 0 to full. Having a
+    // master volume control allows us to
+    // set the global volume without
+    // affecting the notes' on/off function.
+    var master = context.createGain();
+    master.gain.value = 0.1;
+
+    // CONNECTIONS
+    // Here we link all our nodes
+    // together. The final setting
+    // of `context.destination`
+    // pipes the resulting sounds
+    // to our audio output, so we
+    // can hear it.
+    vco1.connect(vco1vol);
+    vco1vol.connect(vca);
+    vco2.connect(vco2vol);
+    vco2vol.connect(vca);
+    vca.connect(master);
+    master.connect(context.destination);
+
     /**
-     * FALLBACKS
+     * -------------------------------------
+     * NOTE CONTROLS
+     *
+     * These methods begin and end our note.
+     * 
+     * `noteStart()` is passed a frequency,
+     * sets that frequency to the VCOs and
+     * then makes sure the VCA is set to 1
+     * (a.k.a. full volume). Then it adds a
+     * class to the relevant note on the
+     * keyboard so we can visually show that
+     * the note has been pressed.
+     * 
+     * `noteEnd()` reverses this process.
+     * -------------------------------------
      */
-    var settings = {
-        dataSrc      : '/week_temp.csv',
-        wrapper      : d3.select('body'),
-        margin       : { top: 20, right: 20, bottom: 20, left: 20 },
-        xColumn      : ['xColumn'],
-        yColumn      : ['yColumn'],
-        hasTimeX     : false,
-        hasTimeY     : false,
-        circleRadius : 3
+    function noteStart(note){
+        // console.log('the note is: ' + note);
+        vco1.frequency.value = note;// Set note pitch
+        vco2.frequency.value = (note / vco2PM);// Set note pitch
+        vca.gain.value = 1;// Start note
+        addPressedClass(note);
+    }
+    function noteEnd(note){
+        removePressedClass(note);
+        // console.log('The note has ended.');
+        vca.gain.value = 0;// End note
+    }
+
+    /**
+     * ------------------------
+     * OSCILLATOR CONTROLS
+     *
+     * We can use these methods
+     * to alter various aspects
+     * of the oscillators.
+     * ------------------------
+     */
+    
+    function masterVolumeControl(volume){
+        master.gain.value = volume;
+    }
+    
+    function oscOneVolumeControl(osc1volume){
+        vco1vol.gain.value = osc1volume;
+    }
+    
+    function oscTwoVolumeControl(osc2volume){
+        vco2vol.gain.value = osc2volume;
+    }
+    
+    function oscOneWaveControl(oscOneWaveType){
+        vco1wav = _handleWaveType(oscOneWaveType);
+        vco1.type = vco1wav;
+    }
+    
+    function oscTwoWaveControl(oscTwoWaveType){
+        vco2wav = _handleWaveType(oscTwoWaveType);
+        vco2.type = vco2wav;
+    }
+    
+    function oscTwoPitchControl(pitchMultiplier){
+        vco2PM = pitchMultiplier;
+    }
+
+    /**
+     * -------------------
+     * CONTROL ROUTER
+     *
+     * Handles incoming
+     * control changes and
+     * directs them to the
+     * correct controller.
+     * -------------------
+     */
+    function _controlRouter(name,value){
+        // console.log('the ' + name + ' control has been set to ' + value);
+        switch (name) {
+            case 'masterVolume':
+                masterVolumeControl(value);
+                break;
+            case 'oscOneVolume':
+                oscOneVolumeControl(value);
+                break;
+            case 'oscTwoVolume':
+                oscTwoVolumeControl(value);
+                break;
+            case 'oscOneWave':
+                oscOneWaveControl(value);
+                break;
+            case 'oscTwoWave':
+                oscTwoWaveControl(value);
+                break;
+            case 'oscTwoPitch':
+                oscTwoPitchControl(value);
+                break;
+        }
+
+    }
+
+    /**
+     * ----------------------------
+     * HANDLE WAVE TYPES
+     * 
+     * This helper-function takes a
+     * raw value from a range input
+     * and converts it into the
+     * correct string value for the
+     * oscillator type.
+     * ----------------------------
+     */
+    function _handleWaveType(int){
+        var rawWaveValue = parseInt(int);
+        switch (rawWaveValue) {
+            case 0:
+                stringWaveValue = 'sine';
+                break;
+            case 1:
+                stringWaveValue = 'square';
+                break;
+            case 2:
+                stringWaveValue = 'sawtooth';
+                break;
+            case 3:
+                stringWaveValue = 'triangle';
+                break;
+        }
+        return stringWaveValue;
+    }
+
+    /**
+     * ----------------------------
+     * TOGGLE CLASSES TO STYLE KEYS
+     *
+     * Requires "noQuery" module
+     * ----------------------------
+     */
+    
+    function addPressedClass(note){
+        targetPitch = Math.floor(note);
+        targetClass = 'pitchClass' + targetPitch;
+        targetKey = document.getElementsByClassName(targetClass);
+        noQuery.addClass(targetKey[0],'pressed');
+    }
+
+    function removePressedClass(note){
+        targetPitch = Math.floor(note);
+        targetClass = 'pitchClass' + targetPitch;
+        targetKey = document.getElementsByClassName(targetClass);
+        noQuery.removeClass(targetKey[0],'pressed');
+    }
+
+    /**
+     * ------------------------------
+     * Public API
+     *
+     * This are the methods that we
+     * want to expose publicly.
+     * MegaSuperSynthInputs taps into
+     * these to control the synth.
+     * ------------------------------
+     */
+    var publicAPI = {
+        controlChanged: _controlRouter,
+        noteStart: noteStart,
+        noteEnd: noteEnd
     };
-
-    /**
-     * SET OPTIONS (if declared)
-     */
-    if (options !== undefined) {
-        if ( options.dataSrc      !== undefined ) { settings.dataSrc      = options.dataSrc;      }
-        if ( options.wrapper      !== undefined ) { settings.wrapper      = options.wrapper;      }
-        if ( options.margin       !== undefined ) { settings.margin       = options.margin;       }
-        if ( options.xColumn      !== undefined ) { settings.xColumn      = options.xColumn;      }
-        if ( options.yColumn      !== undefined ) { settings.yColumn      = options.yColumn;      }
-        if ( options.hasTimeX     === true      ) { settings.hasTimeX     = true;                 }
-        if ( options.hasTimeY     === true      ) { settings.hasTimeY     = true;                 }
-    }
-
-    /**
-     * --------------------
-     * PARSE THE DATA
-     *
-     * Make sure columns
-     * used return integers
-     * and not strings.
-     * --------------------
-     */
-    function _type(data){
-        for (i = 0; i < settings.xColumn.length; i++) {
-            if (settings.hasTimeX) {
-                // Just handles data in YYYY format:
-                data[settings.xColumn[i]] = new Date(data[settings.xColumn[i]],0,1);
-            } else {
-                data[settings.xColumn[i]] = +data[settings.xColumn[i]];
-            }
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            data[settings.yColumn[i]] = +data[settings.yColumn[i]];
-        }
-        return data;
-    }
-
-    /**
-     * ----------------------------
-     * SIZES
-     *
-     * Find the w/h for the chart's
-     * wrapper, and calculate the
-     * inner w/h using the margins.
-     * ----------------------------
-     */
-    var wrapperWidth = parseInt(settings.wrapper.style('width')),
-        wrapperHeight = parseInt(settings.wrapper.style('height')),
-        height = wrapperHeight - settings.margin.top - settings.margin.bottom,
-        width = wrapperWidth - settings.margin.left - settings.margin.right;
-
-    /**
-     * ------------------------
-     * SCALES
-     *
-     * Set the x & y scales.
-     * ------------------------
-     */
-    var xScale = d3.time.scale().range([0, width]),
-        yScale = d3.scale.linear().range([height, 0]);
-
-    /**
-     * --------------------
-     * DRAW SVG
-     *
-     * Build the containing
-     * SVG for our chart.
-     * Build and position
-     * the inner group.
-     * --------------------
-     */
-    var scatterSvg = settings.wrapper.append('svg')
-        .attr('width',wrapperWidth)
-        .attr('height',wrapperHeight)
-        .classed('chartSvg',true);
-
-    var svgInner = scatterSvg.append('g')
-        .attr('transform','translate(' + settings.margin.left + ', ' + settings.margin.top + ')')
-        .attr('width',width)
-        .attr('height',height)
-        .classed('chartWrapper',true);
-
-    /**
-     * Background
-     */
-    var bgWrap = svgInner.append('g')
-        .classed('background',true);
     
-    var barNumber = 1;
-    var barHeight = height / barNumber;
-    
-    for (i = 0; i < barNumber; i++) {
-        var bgClass = 'bgBar';
-        if ((i - 1) % 2){
-            bgClass = bgClass + ' odd';
-        }
-        bgWrap.append('rect')
-            .attr('width',width)
-            .attr('height',barHeight)
-            .classed(bgClass, true)
-            .attr('transform','translate(0,' + (barHeight * i) + ')');
-    }
-
-    /**
-     * ---------------
-     * AXES
-     *
-     * Draw the x axis
-     * & y axis.
-     * ---------------
-     */
-    var axesGroup = scatterSvg.append('g')
-        .attr('transform', 'translate(' + settings.margin.left + ',' + settings.margin.top + ')')
-        .classed('axesWrapper',true);
-    var xAxisG = axesGroup.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .classed('axis xAxis',true);
-    var yAxisG = axesGroup.append('g')
-        .classed('axis yAxis',true);
-    var zAxisG = axesGroup.append('g')
-        .classed('axis zAxis',true);
-    
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        // .ticks(15)
-        .tickFormat(function(d){return d3.time.format('%Y')(new Date(d));});
-        // .tickValues(d3.time.days(t1, t2).filter(function(d, i){ return !(i % 2); }))
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        // .tickValues([1,2,3,4,5,6])
-        .tickFormat(d3.format());
-
-    var zAxis = d3.svg.axis()
-        .scale(xScale)
-        // .ticks('%Y')
-        .tickFormat(d3.time.format('%Y'));
-
-    /**
-     * Axes Labels
-     */
-
-    var xLabelOffset = 35;
-    var xLabelText = 'Year';
-    var yLabelOffset = -35;
-    var yLabelText = 'Points Difference';
-
-    var yAxisLabel = yAxisG.append('text')
-        .classed('axisLabel',true)
-        .attr('transform','translate(' + yLabelOffset + ',' + (height / 2) + ') rotate(-90)')
-        .text(yLabelText);
-
-    /**
-     * Tooltip
-     */
-    var tooltip = d3.select('.tooltip');
-
-    /**
-     * -------------------------
-     * PUT IT ALL TOGETHER
-     *
-     * Using all our vars and
-     * settings, build the chart
-     * from the given dataset.
-     * -------------------------
-     */
-    function _renderChart(data){
-        
-        /**
-         * -----------------
-         * DATA MIN MAX
-         * 
-         * Get the min & max
-         * values for x & y
-         * columns.
-         * -----------------
-         */
-        
-        // Get the Maximum values
-        var xColumnMaximums = [];
-        var yColumnMaximums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMaximums.push(d3.max(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMaximums.push(d3.max(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMax = Math.max.apply(null,xColumnMaximums),
-            yMax = Math.max.apply(null,yColumnMaximums);
-        // console.log('xMax = ' + xMax);
-        // console.log('yMax = ' + yMax);
-
-        // Get the Minimum values
-        var xColumnMinimums = [];
-        var yColumnMinimums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMinimums.push(d3.min(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMinimums.push(d3.min(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMin = Math.min.apply(null,xColumnMinimums),
-            yMin = Math.min.apply(null,yColumnMinimums);
-        // console.log('xMin = ' + xMin);
-        // console.log('yMin = ' + yMin);
-
-        /**
-         * -------
-         * DOMAINS
-         * -------
-         */
-        var xScaleExtent = d3.extent(data, function (d){ return d[settings.xColumn]; });
-        var yScaleExtent = d3.extent(data, function (d){ return d[settings.yColumn2]; });
-        
-        xScale.domain([xMin,xMax]);
-        yScale.domain([yMin,yMax]);
-
-        /**
-         * AXES
-         */
-        // var xLength = data[settings.xColumn];
-        // console.log(xLength);
-
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        // var xLength = xMax - xMin;
-        // var yearMax = d3.time.format('%Y')(new Date(xMax));
-        // var yearMin = d3.time.format('%Y')(new Date(xMin));
-        // var yearCount = yearMax - yearMin;
-        // zAxis.ticks(yearCount);
-
-        zAxisG.call(zAxis);
-        zAxisG
-            .attr('transform','translate(0,' + yScale(0) + ')');
-
-        /**
-         * CREATE SHAPES
-         */
-        var circles = [];
-        var paths = [];
-        var lines = [];
-        var areas = [];
-        var areaShape = [];
-        var entryWrapper = [];
-
-        for (i = 0; i < settings.yColumn.length; i++) {
-
-            entryWrapper[i] = svgInner.append('g')
-                .classed('entry entry' + i + ' entry' + settings.yColumn[i],true);
-
-            /**
-             * CIRCLES
-             */
-            circles[i] = entryWrapper[i].selectAll('circle').data(data);
-
-            circles[i].enter().append('circle');
-
-            circles[i]
-                .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-                .attr('cx',function (d){ return xScale(d[settings.xColumn[0]]); })
-                .attr('cy',function (d){ 
-                    if (d[settings.yColumn[i]] != null || !notNaN(d[settings.yColumn[i]])) {
-                        return yScale(d[settings.yColumn[i]]);
-                    } else {
-                        return 7;
-                    }
-                })
-                .attr('r',function(d){
-                    if (d[settings.yColumn[i]] != null) {
-                        return settings.circleRadius;
-                    } else {
-                        return 0;
-                    }
-                })
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartcircle circle' + settings.yColumn[i], true);
-
-            circles[i].exit().remove();
-    
-            /**
-             * LINES
-             */
-            
-            paths[i] = entryWrapper[i].append('path');
-
-            lines[i] = d3.svg.line()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            paths[i]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline line' + settings.yColumn[i], true)
-                .attr('stroke-width','1px');
-
-            /**
-             * AREAS
-             */
-            
-            areas[i] = entryWrapper[i].append('path');
-
-            areaShape[i] = d3.svg.area()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y0(function(d){ return yScale(0); })
-                .y1(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            areas[i]
-                .attr('d',areaShape[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartarea area' + settings.yColumn[i], true);
-
-            // /**
-            //  * ZERO LINE
-            //  */
-            // var zeroLinePath = d3.svg.line()
-            //     .x(function(d){ return xScale(xMin)]; })
-            //     .y(function(d){ return yScale(0); })
-            //     .interpolate('monotone');// monotone | basis | linear | cardinal | bundle
-
-            // var zeroLine = svgInner.append('path');
-
-            // zeroLine
-            //     .attr('d',zeroLinePath);
-            //     // .attr('transform','translate(0,' + yScale(0) + ')');
-            
-            /**
-             * TRANSITIONS
-             */
-            paths[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            paths[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            circles[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            circles[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            areas[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-            areas[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            function activeOn(subject){
-                var nation = subject.attr('data-nation');
-                setChartVisibleState(nation,true);
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text(nation);
-                // target.classed('active',true);
-            }
-
-            function activeOff(subject){
-                var nation = subject.attr('data-nation');
-                setChartVisibleState(nation,false);
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text('nothing selected');
-                // target.classed('active',false);
-            }
-        }
-
-    }
-
-    /**
-     * ----------------------
-     * INITIALISE THE CHART
-     *
-     * Get the data, parse it
-     * using _type, then draw
-     * the chart using
-     * _renderChart.
-     * ----------------------
-     */
-    d3.csv(settings.dataSrc, _type, _renderChart);
-    
-
+    return publicAPI;
 
 }
 
-var testWrap2 = $('#pointsArea');
-
-if (testWrap2.length) {
-    var testArea = DrawArea({
-        dataSrc  : '/data/resultspositions.csv',
-        wrapper  : d3.select('#pointsArea'),
-        margin   : { top: 20, right: 20, bottom: 30, left: 50 },
-        xColumn  : ['year'],
-        yColumn  : ['england_pd','scotland_pd','ireland_pd','wales_pd','france_pd','italy_pd'],
-        hasTimeX : true
-    });
-}
 /**
- * -----------------------------------------
- * DRAW Line
- * Draw a scatter graph using given options.
- *
- * options [object]:
+ * ---------------------------------------------------
+ * MegaSuperSynthInputs
  * 
- * dataSrc [path string]
- * wrapper [d3 selection]
- * margin [top,right,bottom,left]
- * xColumn [string]
- * yColumn [string]
- * -----------------------------------------
+ * handles event- and data-input for MegaSuperSynth.
+ * 
+ * @param {element} controls Wrapper ID for controls
+ * @param {element} keys     Wrapper ID for piano keys
+ * ---------------------------------------------------
  */
+var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
 
-var DrawLine = function drawLine(options){
-
-    /**
-     * ---------------------------------
-     * OPTIONS
-     * 
-     * Use fallback values if options
-     * are not set in the function call,
-     * otherwise use defined options.
-     * ---------------------------------
-     */
+    var // Note Inputs (the keyboard)
+        synthKeys = keys.getElementsByClassName('synthKey');
     
+    var // Controller Inputs
+        masterVolumeSlider = controls.getElementsByClassName('masterVolume'),
+        oscOneVolumeSlider = controls.getElementsByClassName('oscOneVolume'),
+        oscTwoVolumeSlider = controls.getElementsByClassName('oscTwoVolume'),
+        oscOneWaveSlider = controls.getElementsByClassName('oscOneWave'),
+        oscTwoWaveSlider = controls.getElementsByClassName('oscTwoWave'),
+        oscTwoPitchSlider = controls.getElementsByClassName('oscTwoPitch');
+
+    var // Utility Variables
+        keyIsDown = false,
+        keysDown = [];
+
+    var // Map keys as array
+        keyToKey = {
+             65: '261.63',//'Cl',
+             87: '277.18',//'C#l',
+             83: '293.66',//'Dl',
+             69: '311.13',//'D#l',
+             68: '329.63',//'El',
+             70: '349.23',//'Fl',
+             84: '369.99',//'F#l',
+             71: '392.00',//'Gl',
+             89: '415.30',//'G#l',
+             72: '440.00',//'Al',
+             85: '466.16',//'A#l',
+             74: '493.88',//'Bl',
+             75: '523.25',//'Cu',
+             79: '554.37',//'C#u',
+             76: '587.33',//'Du',
+             80: '622.25',//'D#u',
+            186: '659.26',//'Eu',
+            222: '698.46',//'Fu',
+            221: '739.99',//'F#u',
+            220: '783.99',//'Gu',
+            // 13: '830.61'//'G#u'
+        };
+
     /**
-     * FALLBACKS
+     * ---------------------
+     * SETUP EVENT LISTENERS
+     * ---------------------
      */
-    var settings = {
-        dataSrc      : '/week_temp.csv',
-        wrapper      : d3.select('body'),
-        margin       : { top: 20, right: 20, bottom: 20, left: 20 },
-        xColumn      : ['xColumn'],
-        yColumn      : ['yColumn'],
-        hasTimeX     : false,
-        hasTimeY     : false,
-        circleRadius : 3
+    for (var i = 0; i < synthKeys.length; i++) {
+        synthKeys[i].addEventListener('mousedown',_notePress,false);
+        synthKeys[i].addEventListener('mouseover',_noteMouseover,false);
+        synthKeys[i].addEventListener('mouseout',_noteMouseout,false);
+        synthKeys[i].addEventListener('mouseup',_noteMouseup,false);
     };
-
-    /**
-     * SET OPTIONS (if declared)
-     */
-    if (options !== undefined) {
-        if ( options.dataSrc      !== undefined ) { settings.dataSrc      = options.dataSrc;      }
-        if ( options.wrapper      !== undefined ) { settings.wrapper      = options.wrapper;      }
-        if ( options.margin       !== undefined ) { settings.margin       = options.margin;       }
-        if ( options.xColumn      !== undefined ) { settings.xColumn      = options.xColumn;      }
-        if ( options.yColumn      !== undefined ) { settings.yColumn      = options.yColumn;      }
-        if ( options.hasTimeX     === true      ) { settings.hasTimeX     = true;                 }
-        if ( options.hasTimeY     === true      ) { settings.hasTimeY     = true;                 }
-    }
-
-    /**
-     * --------------------
-     * PARSE THE DATA
-     *
-     * Make sure columns
-     * used return integers
-     * and not strings.
-     * --------------------
-     */
-    function _type(data){
-        for (i = 0; i < settings.xColumn.length; i++) {
-            if (settings.hasTimeX) {
-                data[settings.xColumn[i]] = (new Date(data[settings.xColumn[i]]).getTime()) / 1000;
-            } else {
-                data[settings.xColumn[i]] = +data[settings.xColumn[i]];
-            }
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            data[settings.yColumn[i]] = +data[settings.yColumn[i]];
-        }
-        return data;
-    }
+    document.addEventListener('keydown',_noteKeydown,false);
+    document.addEventListener('keyup',_noteKeyup,false);
+    masterVolumeSlider[0].addEventListener('change',_controlPress,false);
+    oscOneVolumeSlider[0].addEventListener('change',_controlPress,false);
+    oscTwoVolumeSlider[0].addEventListener('change',_controlPress,false);
+    oscOneWaveSlider[0].addEventListener('change',_controlPress,false);
+    oscTwoWaveSlider[0].addEventListener('change',_controlPress,false);
+    oscTwoPitchSlider[0].addEventListener('change',_controlPress,false);
 
     /**
      * ----------------------------
-     * SIZES
+     * HANDLE LISTENER ROUTING
+     * Different types of event
+     * trigger the same end-results
+     * but require different paths
+     * (e.g. mousedown and
+     * mouseover)
      *
-     * Find the w/h for the chart's
-     * wrapper, and calculate the
-     * inner w/h using the margins.
+     * _notePress
+     * _noteMouseover
+     * _noteMouseout
+     * _noteMouseup
      * ----------------------------
      */
-    var wrapperWidth = parseInt(settings.wrapper.style('width')),
-        wrapperHeight = parseInt(settings.wrapper.style('height')),
-        height = wrapperHeight - settings.margin.top - settings.margin.bottom,
-        width = wrapperWidth - settings.margin.left - settings.margin.right;
-
-    /**
-     * ------------------------
-     * SCALES
-     *
-     * Set the x & y scales.
-     * ------------------------
-     */
-    var xScale = d3.scale.linear().range([0, width]),
-        yScale = d3.scale.linear().range([height, 0]);
-
-    /**
-     * --------------------
-     * DRAW SVG
-     *
-     * Build the containing
-     * SVG for our chart.
-     * Build and position
-     * the inner group.
-     * --------------------
-     */
-    var scatterSvg = settings.wrapper.append('svg')
-        .attr('width',wrapperWidth)
-        .attr('height',wrapperHeight)
-        .classed('chartSvg',true);
-
-    var svgInner = scatterSvg.append('g')
-        .attr('transform','translate(' + settings.margin.left + ', ' + settings.margin.top + ')')
-        .attr('width',width)
-        .attr('height',height)
-        .classed('chartWrapper',true);
-
-    /**
-     * Background
-     */
-    var bgWrap = svgInner.append('g')
-        .classed('background',true);
     
-    var barNumber = 6;
-    var barHeight = height / barNumber;
-    
-    for (i = 0; i < barNumber; i++) {
-        var bgClass = 'bgBar';
-        if ((i - 1) % 2){
-            bgClass = bgClass + ' odd';
+    function _notePress(){
+        keyIsDown = true;
+        var noteValue = this.getAttribute('data-pitch');
+        console.log(noteValue);
+        newSynth.noteStart(noteValue);
+    }
+
+    function _noteMouseover(){
+        if (keyIsDown) {
+            var noteValue = this.getAttribute('data-pitch');
+            newSynth.noteStart(noteValue);
         }
-        bgWrap.append('rect')
-            .attr('width',width)
-            .attr('height',barHeight)
-            .classed(bgClass, true)
-            .attr('transform','translate(0,' + (barHeight * i) + ')');
+    }
+
+    function _noteMouseout(){
+        if (keyIsDown) {
+            var noteValue = this.getAttribute('data-pitch');
+            newSynth.noteEnd(noteValue);
+        }
+    }
+
+    function _noteMouseup(){
+        keyIsDown = false;
+        var noteValue = this.getAttribute('data-pitch');
+        newSynth.noteEnd(noteValue);
     }
 
     /**
-     * ---------------
-     * AXES
-     *
-     * Draw the x axis
-     * & y axis.
-     * ---------------
+     * ---------------------
+     * CONTROLLER ROUTING
+     * Sends controller data
+     * to controller
+     * ---------------------
      */
-    var axesGroup = scatterSvg.append('g')
-        .attr('transform', 'translate(' + settings.margin.left + ',' + settings.margin.top + ')')
-        .classed('axesWrapper',true);
-    var xAxisG = axesGroup.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .classed('axis xAxis',true);
-    var yAxisG = axesGroup.append('g')
-        .classed('axis yAxis',true);
-    
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        .tickFormat(function(d){return d3.time.format('%Y')(new Date((d * 1000)));});
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        .tickValues([1,2,3,4,5,6])
-        .tickFormat(d3.format());
-
-    /**
-     * Axes Labels
-     */
-
-    var xLabelOffset = 35;
-    var xLabelText = 'Year';
-    var yLabelOffset = -30;
-    var yLabelText = 'Finishing Position';
-
-    var yAxisLabel = yAxisG.append('text')
-        .classed('axisLabel',true)
-        .attr('transform','translate(' + yLabelOffset + ',' + (height / 2) + ') rotate(-90)')
-        .text(yLabelText);
-
-    /**
-     * Tooltip
-     */
-    var tooltip = d3.select('.tooltip');
-
-    /**
-     * -------------------------
-     * PUT IT ALL TOGETHER
-     *
-     * Using all our vars and
-     * settings, build the chart
-     * from the given dataset.
-     * -------------------------
-     */
-    function _renderChart(data){
-        
-        /**
-         * -----------------
-         * DATA MIN MAX
-         * 
-         * Get the min & max
-         * values for x & y
-         * columns.
-         * -----------------
-         */
-        
-        // Get the Maximum values
-        var xColumnMaximums = [];
-        var yColumnMaximums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMaximums.push(d3.max(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMaximums.push(d3.max(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMax = Math.max.apply(null,xColumnMaximums),
-            yMax = Math.max.apply(null,yColumnMaximums);
-        // console.log('xMax = ' + xMax);
-        // console.log('yMax = ' + yMax);
-
-        // Get the Minimum values
-        var xColumnMinimums = [];
-        var yColumnMinimums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMinimums.push(d3.min(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMinimums.push(d3.min(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMin = Math.min.apply(null,xColumnMinimums),
-            yMin = Math.min.apply(null,yColumnMinimums);
-        // console.log('xMin = ' + xMin);
-        // console.log('yMin = ' + yMin);
-
-        /**
-         * -------
-         * DOMAINS
-         * -------
-         */
-        var xScaleExtent = d3.extent(data, function (d){ return d[settings.xColumn]; });
-        var yScaleExtent = d3.extent(data, function (d){ return d[settings.yColumn2]; });
-        
-        xScale.domain([xMin,xMax]);
-        yScale.domain([7,1]);
-
-        /**
-         * AXES
-         */
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        /**
-         * CREATE SHAPES
-         */
-        var circles = [];
-        var paths = [];
-        var lines = [];
-        var entryWrapper = [];
-
-        for (i = 0; i < settings.yColumn.length; i++) {
-
-            entryWrapper[i] = svgInner.append('g')
-                .classed('entry entry' + i + ' entry' + settings.yColumn[i],true);
-
-            paths[i] = entryWrapper[i].append('path');
-
-            /**
-             * CIRCLES
-             */
-            circles[i] = entryWrapper[i].selectAll('circle').data(data);
-
-            circles[i].enter().append('circle');
-
-            circles[i]
-                .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-                .attr('cx',function (d){ return xScale(d[settings.xColumn[0]]); })
-                .attr('cy',function (d){ return yScale(d[settings.yColumn[i]]); })
-                .attr('r',function(d){ return settings.circleRadius; })
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartcircle circle' + settings.yColumn[i], true);
-
-            circles[i].exit().remove();
-    
-            /**
-             * LINES
-             */
-            lines[i] = d3.svg.line()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('monotone');// monotone | basis | linear | cardinal | bundle
-
-            paths[i]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline line' + settings.yColumn[i], true)
-                .attr('stroke-width','1px');
-
-            /**
-             * TRANSITIONS
-             */
-            paths[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            paths[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            circles[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            circles[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            function activeOn(subject){
-                var nation = subject.attr('data-nation');
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text(nation);
-                // target.classed('active',true);
-            }
-
-            function activeOff(subject){
-                // var nation = subject.attr('data-nation');
-                // var targetClass = '.entry' + nation;
-                // var target = d3.select(targetClass);
-                tooltip.text('nothing selected');
-                // target.classed('active',false);
-            }
-        }
-
+    function _controlPress(){
+        var sliderValue = this.value;
+        var sliderName = this.getAttribute('data-controlName');
+        newSynth.controlChanged(sliderName,sliderValue);
+        controlSliderDisplay.sliderChange(sliderName,sliderValue);
     }
 
     /**
-     * ----------------------
-     * INITIALISE THE CHART
-     *
-     * Get the data, parse it
-     * using _type, then draw
-     * the chart using
-     * _renderChart.
-     * ----------------------
+     * ------------
+     * KEY BINDINGS
+     * ------------
      */
-    d3.csv(settings.dataSrc, _type, _renderChart);
+    function _noteKeydown(key){
+        // If the key is already being held down, abort function.
+        console.log(key.keyCode);
+        if (key.keyCode in keysDown){
+            key.preventDefault();
+            return;
+        }
+        // Log the key in keysDown
+        keysDown[key.keyCode] = true;
+        if (typeof keyToKey[key.keyCode] !== 'undefined'){
+            key.preventDefault();
+            noteValue = keyToKey[key.keyCode];
+            console.log(noteValue);
+            newSynth.noteStart(noteValue);
+        }
+    }
+
+    function _noteKeyup(key){
+        delete keysDown[key.keyCode];
+        if (typeof keyToKey[key.keyCode] !== 'undefined'){
+            key.preventDefault();
+            noteValue = keyToKey[key.keyCode];
+            //console.log(noteValue);
+            newSynth.noteEnd(noteValue);
+        }
+    }
+
     
-
-
 }
 
-var testWrap1 = $('#resultsLine');
-
-if(testWrap1.length) {
-    var testScatter = DrawLine({
-        dataSrc  : '/data/resultspositions.csv',
-        wrapper  : d3.select('#resultsLine'),
-        margin   : { top: 20, right: 20, bottom: 30, left: 50 },
-        xColumn  : ['year'],
-        yColumn  : ['england','scotland','ireland','wales','france','italy'],
-        hasTimeX : true
-    });
-}
-var selectors = $('.nationSelector');
-
-selectors.on('change',function(){
-	
-	var isChecked = this.checked;
-	var nation = $(this).attr('name');
-	// console.log('the ' + nation + ' checkbox status is ' + isChecked);
-	
-	setChartVisibleState(nation,isChecked);
-});
-
-function setChartVisibleState(dataSelector,status){
-	var targetClass = '.entry' + dataSelector;
-	var target = d3.select(targetClass);
-	if (status) {
-		target.classed('active',true);
-	} else {
-		target.classed('active',false);
-	}
-}
-
-var SingleGraph = function singleGraph(settings){
-
+/**
+ * ------------------------------------
+ * noQuery
+ * 
+ * These are basic utilities that allow
+ * for cross-browser support, replacing
+ * the need to use jQuery.
+ * ------------------------------------
+ */
+var noQuery = (function(){
+    
     /**
-     * --------------------
-     * PARSE THE DATA
-     *
-     * Make sure columns
-     * used return integers
-     * and not strings.
-     * --------------------
+     * ---------
+     * HAS CLASS
+     * 
+     * Does the target element have the target class?
+     * @param  {object}  el        The target element.
+     * @param  {string}  className The target class.
+     * @return {Boolean}           If the el has the class, output 'true'. Otherwise 'false'.
+     * ---------
      */
-    function _type(data){
-        for (i = 0; i < settings.xColumn.length; i++) {
-            // X Axis uses dates in YYYY format
-            data[settings.xColumn[i]] = new Date(data[settings.xColumn[i]],0,1);
+    function _hasClass(el, className){
+        if (el.classList) {
+            var result = el.classList.contains(className);
+        } else {
+            var result = new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
         }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            // Y Axis has multiple columns that must be integers, not strings
-            data[settings.yColumn[i]] = +data[settings.yColumn[i]];
-        }
-        return data;
+        return result;
     }
 
     /**
-     * ----------------------------
-     * SIZES
-     *
-     * Find the w/h for the chart's
-     * wrapper, and calculate the
-     * inner w/h using the margins.
-     * ----------------------------
+     * ---------
+     * ADD CLASS
+     * 
+     * Add a class to the target element.
+     * @param {object} el        The target element.
+     * @param {string} className The target class.
+     * ---------
      */
-    var wrapperWidth = parseInt(settings.wrapper.style('width')),
-        wrapperHeight = parseInt(settings.wrapper.style('height')),
-        height = wrapperHeight - settings.margin.top - settings.margin.bottom,
-        width = wrapperWidth - settings.margin.left - settings.margin.right;
-
-    /**
-     * ------------------------
-     * SCALES
-     *
-     * Set the x & y scales.
-     * ------------------------
-     */
-    var xScale = d3.time.scale().range([0, width]),
-        yScale = d3.scale.linear().range([height, 0]);
-
-    /**
-     * --------------------
-     * DRAW SVG
-     *
-     * Build the containing
-     * SVG for our chart.
-     * Build and position
-     * the inner group.
-     * --------------------
-     */
-    var scatterSvg = settings.wrapper.append('svg')
-        .attr('width',wrapperWidth)
-        .attr('height',wrapperHeight)
-        .classed('chartSvg',true);
-
-    var svgInner = scatterSvg.append('g')
-        .attr('transform','translate(' + settings.margin.left + ', ' + settings.margin.top + ')')
-        .attr('width',width)
-        .attr('height',height)
-        .classed('chartWrapper',true);
-
-    /**
-     * Background
-     */
-    var bgWrap = svgInner.append('g')
-        .classed('background',true);
-    
-    var barNumber = 6;
-    var barHeight = height / barNumber;
-    
-    for (i = 0; i < barNumber; i++) {
-        var bgClass = 'bgBar';
-        if ((i - 1) % 2){
-            bgClass = bgClass + ' odd';
+    function _addClass(el, className){
+        if (el.classList) {
+            el.classList.add(className);
         }
-        bgWrap.append('line')
-            .attr('x1',0)
-            .attr('x2',width)
-            .attr('y1',(barHeight * i))
-            .attr('y2',(barHeight * i))
-            .classed(bgClass, true);
+        else {
+            el.className += ' ' + className;
+        }
     }
 
     /**
-     * ---------------
-     * AXES
-     *
-     * Draw the x axis
-     * & y axis.
-     * ---------------
+     * ------------
+     * REMOVE CLASS
+     * 
+     * Remove a class from the target element.
+     * @param  {object} el        The target element.
+     * @param  {string} className The target class.
+     * ------------
      */
-    var axesGroup = scatterSvg.append('g')
-        .attr('transform', 'translate(' + settings.margin.left + ',' + settings.margin.top + ')')
-        .classed('axesWrapper',true);
-    var xAxisG = axesGroup.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .classed('axis xAxis',true);
-    var yAxisG = axesGroup.append('g')
-        .classed('axis yAxis',true);
-    
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        .tickFormat(function(d){return d3.time.format('%Y')(new Date(d));});
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        .tickValues([1,2,3,4,5,6])
-        .tickFormat(d3.format());
-
-    /**
-     * Axes Labels
-     */
-
-    var xLabelOffset = 35;
-    var xLabelText = 'Year';
-    var yLabelOffset = -30;
-    // var yLabelText = 'Finishing Position';
-
-    var yAxisLabel = yAxisG.append('text')
-        .classed('axisLabel',true)
-        .attr('transform','translate(' + yLabelOffset + ',' + (height / 2) + ') rotate(-90)');
-        // .text(yLabelText);
-
-    /**
-     * Tooltip
-     */
-    // var tooltip = d3.select('.tooltip');
-    var tooltipsWrapper = d3.select('.chart1tooltips');
-
-    /**
-     * -------------------------
-     * PUT IT ALL TOGETHER
-     *
-     * Using all our vars and
-     * settings, build the chart
-     * from the given dataset.
-     * -------------------------
-     */
-    function _renderChart(data){
-        
-        /**
-         * -----------------
-         * DATA MIN MAX
-         * 
-         * Get the min & max
-         * values for x & y
-         * columns.
-         * -----------------
-         */
-        
-        // Get the Maximum values
-        var xColumnMaximums = [];
-        var yColumnMaximums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMaximums.push(d3.max(data, function (d){ return d[settings.xColumn[i]]; }));
+    function _removeClass(el, className){
+        if (el.classList) {
+            el.classList.remove(className);
         }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMaximums.push(d3.max(data, function (d){ return d[settings.yColumn[i]]; }));
+        else {
+            el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
         }
-        var xMax = Math.max.apply(null,xColumnMaximums),
-            yMax = Math.max.apply(null,yColumnMaximums);
-        // console.log('xMax = ' + xMax);
-        // console.log('yMax = ' + yMax);
-
-        // Get the Minimum values
-        var xColumnMinimums = [];
-        var yColumnMinimums = [];
-        for (i = 0; i < settings.xColumn.length; i++) {
-            xColumnMinimums.push(d3.min(data, function (d){ return d[settings.xColumn[i]]; }));
-        }
-        for (i = 0; i < settings.yColumn.length; i++) {
-            yColumnMinimums.push(d3.min(data, function (d){ return d[settings.yColumn[i]]; }));
-        }
-        var xMin = Math.min.apply(null,xColumnMinimums),
-            yMin = Math.min.apply(null,yColumnMinimums);
-        // console.log('xMin = ' + xMin);
-        // console.log('yMin = ' + yMin);
-
-        /**
-         * -------
-         * DOMAINS
-         * -------
-         */
-        var xScaleExtent = d3.extent(data, function (d){ return d[settings.xColumn]; });
-        var yScaleExtent = d3.extent(data, function (d){ return d[settings.yColumn2]; });
-        
-        xScale.domain([xMin,xMax]);
-        yScale.domain([7,1]);
-
-        /**
-         * AXES
-         */
-        xAxisG.call(xAxis);
-        yAxisG.call(yAxis);
-
-        /**
-         * CREATE SHAPES
-         */
-        
-        // Setup vars to handle the `for` statement
-        var circles = [];
-        var paths = [];
-        var lines = [];
-        var entryWrapper = [];
-        var tooltips = [];
-        var hoverTargets = [];
-
-        for (i = 0; i < settings.yColumn.length; i++) {
-
-            entryWrapper[i] = svgInner.append('g')
-                .classed('entry entry' + i + ' entry' + settings.yColumn[i],true);
-
-            paths[i] = entryWrapper[i].append('path');
-            paths[i + settings.yColumn.length] = entryWrapper[i].append('path');
-
-            /**
-             * CIRCLES
-             */
-            circles[i] = entryWrapper[i].selectAll('circle').data(data);
-
-            circles[i].enter().append('circle');
-
-            circles[i]
-                .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-                .attr('cx',function (d){ return xScale(d[settings.xColumn[0]]); })
-                .attr('cy',function (d){ return yScale(d[settings.yColumn[i]]); })
-                .attr('r',function(d){ return settings.circleRadius; })
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartcircle circle' + settings.yColumn[i], true);
-
-            circles[i].exit().remove();
-    
-            /**
-             * LINES
-             */
-            lines[i] = d3.svg.line()
-                .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-                .x(function(d){ return xScale(d[settings.xColumn[0]]); })
-                .y(function(d){ return yScale(d[settings.yColumn[i]]); })
-                .interpolate('linear');// monotone | basis | linear | cardinal | bundle
-
-            paths[i]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline line' + settings.yColumn[i], true)
-                .attr('stroke-width','1px');
-
-            paths[i + settings.yColumn.length]
-                .attr('d',lines[i](data))
-                .attr('fill','none')
-                .attr('data-nation',settings.yColumn[i])
-                .classed('chartline chartline_hover line' + settings.yColumn[i], true)
-                .attr('stroke-width','10px');
-
-            /**
-             * TOOLTIPS
-             */
-            tooltips[i] = tooltipsWrapper.append('div')
-                .classed('chart1tooltip ' + settings.yColumn[i],true);
-                // .text(settings.yColumn[i])
-            
-            tooltips[i].append('div')
-                .classed('colourBox colourBox_' + settings.yColumn[i], true);
-
-            tooltips[i].append('p')
-                .classed('labelBox labelBox_' + settings.yColumn[i], true)
-                .text(settings.yColumn[i]);
-
-            /**
-             * TRANSITIONS
-             */
-            paths[i + settings.yColumn.length].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            paths[i + settings.yColumn.length].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            circles[i].on('mouseover',function(){
-                activeOn($(this));
-            });
-
-            circles[i].on('mouseout',function(){
-                activeOff($(this));
-            });
-
-            function activeOn(subject){
-                var nation = subject.attr('data-nation');
-
-                var targetClass = '.passive.entry' + nation;
-                var target = d3.select(targetClass);
-
-                var targetTooltipClass = '.chart1tooltip.' + nation;
-                var targetTooltip = d3.select(targetTooltipClass);
-                // tooltip.text(nation);
-                target.classed('hovering',true);
-
-                // if (target.hasClass('passive'))
-
-                targetTooltip
-                    // .text(nation)
-                    // .classed(nation,true)
-                    .classed('hovering',true);
-                    // .style('left', (d3.event.pageX + 20) + 'px')
-                    // .style('top', (d3.event.pageY) + 'px');
-            }
-
-            function activeOff(subject){
-                var nation = subject.attr('data-nation');
-                var targetClass = '.passive.entry' + nation;
-                var target = d3.select(targetClass);
-                target.classed('hovering',false);
-
-                var targetTooltipClass = '.chart1tooltip.' + nation;
-                var targetTooltip = d3.select(targetTooltipClass);
-                targetTooltip
-                    // .text('nothing selected')
-                    // .classed(nation,false)
-                    .classed('hovering',false);
-            }
-        }
-
-        /**
-         * HOVER TARGETS
-         */
-        // var hoverTargetWidth = width / settings.xColumn[0].length;
-        // var hoverTargetNumber = settings.xColumn[0].length;
-        // var testVar = data[settings.xColumn[0]];
-        // console.log(testVar);
-        
-        // var hoverTargets = svgInner.selectAll('rect')
-        //   .data(data)
-        //   .enter()
-        //     .append('rect')
-        //     .attr("x", function(datum, index) { return xScale(index); })
-        //     .attr("y", 0)
-        //     .attr('width',hoverTargetWidth)
-        //     .attr('height',height)
-        //     .classed('hoverTarget',true);
-        
-        
-
-
-
-
-
-
-
-        // hoverTargets = svgInner.selectAll('rect').data(data);
-
-        // hoverTargets.enter().append('rect');
-
-        // function getit(d){ return d[settings.xColumn[0]]; }
-
-        // var hoverTargetNumber = getit();
-        // console.log(hoverTargetNumber);
-
-        // hoverTargets
-        //     // .filter(function(d){ return !isNaN(d[settings.yColumn[i]]); })
-        //     .attr('x',function (d){ return xScale(d[settings.xColumn[0]]); })
-        //     .attr('y',0)
-        //     // .attr('data-nation',settings.yColumn[i])
-        //     .classed('hoverTarget', true);
-
-        // hoverTargets.exit().remove();
-
-        
-
-
-
-
-
-
-
-        // var hoverTargets = svgInner.append('g')
-        //     .classed('hoverTargets',true);
-        
-        // var hoverTargetNumber = settings.xColumn[0].length;
-        // // var barHeight = height / barNumber;
-        
-        // for (i = 0; i < barNumber; i++) {
-        //     var hoverTargetWidth = width / hoverTargetNumber;
-            
-        //     hoverTargets.append('rect')
-        //         .classed('hoverTarget',true)
-        //         .attr('width',hoverTargetWidth)
-        //         .attr('height',height)
-        //         .attr('transform','translate(' + (hoverTargetWidth * i) + ',0)');
-        // }
-
     }
 
     /**
-     * ----------------------
-     * INITIALISE THE CHART
-     *
-     * Get the data, parse it
-     * using _type, then draw
-     * the chart using
-     * _renderChart.
-     * ----------------------
+     * --------------
+     * PUBLIC METHODS
+     * 
+     * Expose all our
+     * functions into
+     * the world...
+     * --------------
      */
-    d3.csv(settings.dataSrc, _type, _renderChart);
+    var publicAPI = {
+        hasClass: _hasClass,
+        addClass: _addClass,
+        removeClass: _removeClass
+    };
+    return publicAPI;
+})();
 
-    
+/**
+ * ---------------
+ * CONTROL DISPLAY
+ * 
+ * Show live value
+ * for the control
+ * sliders.
+ * ---------------
+ */
+var controlSliderDisplay = (function(){
+
+    function sliderChange(name,value){
+        var targetClass = "controlLabel_" + name;
+        var target = document.getElementsByClassName(targetClass);
+        var outputValue;
+
+        switch (name) {
+            case 'masterVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscOneVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscTwoVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscOneWave':
+                outputValue = _handleWaveType(value);
+                break;
+            case 'oscTwoWave':
+                outputValue = _handleWaveType(value);
+                break;
+            case 'oscTwoPitch':
+                outputValue = 0 - value;
+                console.log()
+                break;
+        }
+
+        target[0].textContent = outputValue;
+    }
+
+    function _handleWaveType(int){
+        var rawWaveValue = parseInt(int);
+        switch (rawWaveValue) {
+            case 0:
+                stringWaveValue = 'sine';
+                break;
+            case 1:
+                stringWaveValue = 'square';
+                break;
+            case 2:
+                stringWaveValue = 'sawtooth';
+                break;
+            case 3:
+                stringWaveValue = 'triangle';
+                break;
+        }
+        return stringWaveValue;
+    }
+
+    var publicAPI = {
+        sliderChange: sliderChange
+    };
+    return publicAPI;
+})();
 
 
-}
+var controlsWrapper = document.getElementById('synthControls');
+var keysWrapper = document.getElementById('synthKeys');
 
-var testWrap1 = $('#single');
+var // determine if Web Audio API is available
+    contextClass = (window.AudioContext || window.webkitAudioContext);
 
-if(testWrap1.length) {
-    var chartOne = SingleGraph({
-        // dataSrc  : '/data/resultspositions.csv',
-        dataSrc  : '/data/tipstricks2.csv',
-        wrapper  : d3.select('#single'),
-        margin   : { top: 20, right: 20, bottom: 30, left: 30 },
-        // xColumn  : ['year'],
-        // yColumn  : ['england','wales'],
-        xColumn  : ['date'],
-        yColumn  : ['close'],
-        hasTimeX : true,
-        hasTimeY : false,
-        circleRadius : 3
-    });
+if (contextClass) {
+    var newSynth = MegaSuperSynth(contextClass);
+    var newSynthInputs = MegaSuperSynthInputs(controlsWrapper,keysWrapper);
+    // var newControlSliderDisplay = controlSliderDisplay();
 }
