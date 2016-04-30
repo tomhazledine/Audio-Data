@@ -267,6 +267,67 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
     }
 
     /**
+     * ---------------
+     * AUDIO ANALYSIS
+     *
+     * These functions
+     * hook into the
+     * output of the
+     * synth, and get
+     * data about the
+     * audio.
+     * ---------------
+     */
+    
+
+    
+    // Setup an analyser
+    analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+
+
+    // sourceNode = context.createBufferSource();
+    // sourceNode.connect(context.destination);
+    master.connect(analyser);
+
+    // master
+
+    // Create a Node to listen to the output every
+    // 2048 'frames' (a.k.a. 21 times a
+    // second at sample-rate of 44.1k)
+    javascriptNode = context.createScriptProcessor(16384,1,1);
+
+    // Connect it to our audio:
+    javascriptNode.connect(master);
+
+    javascriptNode.onaudioprocess = function(){
+
+        // var dataArray = new Uint8Array(bufferLength);
+
+        // analyser.getByteFrequencyData(dataArray);
+
+        // var v = dataArray[200];// / 128.0;
+
+        // console.log(dataArray);
+
+        var array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteTimeDomainData(array);
+        // console.log(array);
+        var logArray = false;
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] > 128) {
+                logArray = true;
+            }
+        }
+        if (logArray) {
+            console.log(array);
+        }
+
+        
+    }
+
+
+    /**
      * ------------------------------
      * Public API
      *
@@ -373,7 +434,7 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
     function _notePress(){
         keyIsDown = true;
         var noteValue = this.getAttribute('data-pitch');
-        console.log(noteValue);
+        // console.log(noteValue);
         newSynth.noteStart(noteValue);
     }
 

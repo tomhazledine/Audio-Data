@@ -1,5 +1,7 @@
 <article class="keyboard clearfix">
 
+    <!-- <canvas id="myCanvas"></canvas> -->
+
     <div id="synthControls" class="controls clearfix">
 
         <div class="controlStripOuter">
