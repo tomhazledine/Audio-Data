@@ -279,43 +279,32 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
      * ---------------
      */
     
-
-    
     // Setup an analyser
-    analyser = context.createAnalyser();
+    var analyser = context.createAnalyser();
     analyser.fftSize = 2048;
-
-
-    // sourceNode = context.createBufferSource();
-    // sourceNode.connect(context.destination);
+    var bufferSize = analyser.frequencyBinCount;
+    // Connect the analyser to our master audio output
     master.connect(analyser);
-
-    // master
 
     // Create a Node to listen to the output every
     // 2048 'frames' (a.k.a. 21 times a
     // second at sample-rate of 44.1k)
-    javascriptNode = context.createScriptProcessor(16384,1,1);
+    listenerNode = context.createScriptProcessor(16384,1,1);
 
     // Connect it to our audio:
-    javascriptNode.connect(master);
+    listenerNode.connect(master);
 
-    javascriptNode.onaudioprocess = function(){
+    listenerNode.onaudioprocess = function(){
 
-        // var dataArray = new Uint8Array(bufferLength);
-
-        // analyser.getByteFrequencyData(dataArray);
-
-        // var v = dataArray[200];// / 128.0;
-
-        // console.log(dataArray);
-
+        // Create an array to store our data
         var array = new Uint8Array(analyser.frequencyBinCount);
+        // Get the audio data and store it in our array
         analyser.getByteTimeDomainData(array);
-        // console.log(array);
+        
+        // Only log the result if there's a signal
         var logArray = false;
         for (var i = 0; i < array.length; i++) {
-            if (array[i] > 128) {
+            if (array[i] > 128) {// no signal = 128
                 logArray = true;
             }
         }
@@ -323,7 +312,6 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
             console.log(array);
         }
 
-        
     }
 
 
