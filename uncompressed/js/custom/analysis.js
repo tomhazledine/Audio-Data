@@ -2,10 +2,10 @@
  * ---------------
  * AUDIO ANALYSIS
  *
- * These functions
- * hook into the
+ * This function
+ * hooks into the
  * output of the
- * synth, and get
+ * synth, and gets
  * data about the
  * audio.
  * ---------------
@@ -41,7 +41,7 @@ function audioAnalysis(context,master){
 
         var volume = getAverageVolume(array);
         console.log(volume);
-        drawVolume(volume)
+        redrawVolume(volume)
         
         // // Only log the result if there's a signal
         // var logArray = false;
@@ -96,15 +96,86 @@ function getAverageVolume(array){
 /**
  * DRAW VOLUME OUTPUT
  */
-function drawVolume(float){
-    var canvas = document.getElementById("volumeCanvas");
-    var canvasCtx = canvas.getContext("2d");
 
-    var my_gradient = canvasCtx.createLinearGradient(0,0,0,170);
-    my_gradient.addColorStop(0,"black");
-    my_gradient.addColorStop(1,"white");
+var w = 20,
+    h = 80;
 
-    canvasCtx.clearRect(0,0,60,130);
-    canvasCtx.fillStyle = my_gradient;
-    canvasCtx.fillRect(0,130-float,25,130);
+var x = d3.scale.linear()
+    .domain([0,1])
+    .range([0,w]);
+
+var y = d3.scale.pow()
+    .domain([0,140])
+    .rangeRound([0,h]);
+
+var volumeOutput = d3.select('#volumeDisplay')
+    .append('svg')
+        .attr('class','volumeOutputChart')
+        .attr('width',w)
+        .attr('height',h);
+
+var volumeOutputBackground = volumeOutput.append('g')
+    .attr('class','backgroundWrapper')
+    .attr('width',w)
+    .attr('height',h)
+        .append('rect')
+            .attr('class','background')
+            .attr('width',w)
+            .attr('height',h);
+
+var volumeOutputData = volumeOutput.append('g')
+    .attr('class','dataWrapper')
+    .attr('width',w)
+    .attr('height',h);
+
+volumeOutputData.selectAll('rect')
+    .data([0])
+    .enter().append('rect')
+        .attr('x',0)// - .5)
+        .attr('y',0)//function(d){ return h - y(d) - .5; })
+        .attr('width',w)
+        .attr('height',function(d){ return h - y(d); });
+
+function redrawVolume(float){
+
+    // chart = d3.select('#volumeDisplay .volumeOutputChart');
+
+    volumeOutputData.selectAll('rect')
+        .data([float])
+        .transition()
+            .duration(0001)
+            // .attr("y", function(d) { return h - y(d) - .5; })
+            .attr('height',function(d){ return h - y(d); });
+
+    // var basicBarData = [];
+
+    // for (var i = 0; i < 100; i++) {
+    //     basicBarData.push(Math.round(Math.random()*100))
+    // };
+
+    // var coloursPreset = d3.scale.category20c();
+
+    // var barOne = DrawBar({
+    //     'data': basicBarData,
+    //     'wrapper': d3.select('.volumeDisplay'),
+    //     'margins': {
+    //         top: 30,
+    //         right: 30,
+    //         bottom: 40,
+    //         left: 50
+    //     },
+    //     'colours': coloursPreset.range(),
+    //     'sort': true
+    // });
+
+    // var canvas = document.getElementById("volumeCanvas");
+    // var canvasCtx = canvas.getContext("2d");
+
+    // var my_gradient = canvasCtx.createLinearGradient(0,0,0,130);
+    // my_gradient.addColorStop(0,"black");
+    // my_gradient.addColorStop(1,"white");
+
+    // canvasCtx.clearRect(0,0,60,130);
+    // canvasCtx.fillStyle = my_gradient;
+    // canvasCtx.fillRect(0,130-float,25,130);
 }

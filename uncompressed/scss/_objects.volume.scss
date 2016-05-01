@@ -1,0 +1,25 @@
+.volumeCanvas{
+    border:.2em solid $primary;
+}
+
+.volumeDisplayWrapper{
+    margin:2em 0;
+    h4{
+        display:block;
+        width:6em;
+
+        line-height:4.5em;
+        float:left;
+    }
+}
+
+.volumeOutputChart{
+    border:.2em solid $black;
+    // border-radius:.5em;
+    .backgroundWrapper .background{
+        fill:$primary;
+    }
+    .dataWrapper rect{
+        fill:$cream;
+    }
+}
