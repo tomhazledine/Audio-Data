@@ -278,6 +278,7 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
      * audio.
      * ---------------
      */
+    audioAnalysis();
     
     // Setup an analyser
     var analyser = context.createAnalyser();
@@ -326,6 +327,7 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
      * ------------------------------
      */
     var publicAPI = {
+        handleWaveType: _handleWaveType,
         controlChanged: _controlRouter,
         noteStart: noteStart,
         noteEnd: noteEnd
@@ -458,7 +460,46 @@ var MegaSuperSynthInputs = function megaSuperSynthInputs(controls,keys){
         var sliderValue = this.value;
         var sliderName = this.getAttribute('data-controlName');
         newSynth.controlChanged(sliderName,sliderValue);
-        controlSliderDisplay.sliderChange(sliderName,sliderValue);
+        sliderChange(sliderName,sliderValue);
+    }
+
+    /**
+     * ---------------
+     * CONTROL DISPLAY
+     * 
+     * Show live value
+     * for the control
+     * sliders.
+     * ---------------
+     */
+    function sliderChange(name,value){
+        var targetClass = "controlLabel_" + name;
+        var target = document.getElementsByClassName(targetClass);
+        var outputValue;
+
+        switch (name) {
+            case 'masterVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscOneVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscTwoVolume':
+                outputValue = value * 10;
+                break;
+            case 'oscOneWave':
+                outputValue = newSynth.handleWaveType(value);
+                break;
+            case 'oscTwoWave':
+                outputValue = newSynth.handleWaveType(value);
+                break;
+            case 'oscTwoPitch':
+                outputValue = 0 - value;
+                console.log()
+                break;
+        }
+
+        target[0].textContent = outputValue;
     }
 
     /**
@@ -573,85 +614,6 @@ var noQuery = (function(){
         hasClass: _hasClass,
         addClass: _addClass,
         removeClass: _removeClass
-    };
-    return publicAPI;
-})();
-
-/**
- * ---------------
- * CONTROL DISPLAY
- * 
- * Show live value
- * for the control
- * sliders.
- *
- * ||||||||||||||||||||||||||||
- * NOTE:
- * this has been added recently
- * and in a rush. It has yet to
- * be fully integrated into the
- * MegaSuperSynthInputs module,
- * but it will be soon...
- * ||||||||||||||||||||||||||||
- * 
- * ---------------
- */
-var controlSliderDisplay = (function(){
-
-    function sliderChange(name,value){
-        var targetClass = "controlLabel_" + name;
-        var target = document.getElementsByClassName(targetClass);
-        var outputValue;
-
-        switch (name) {
-            case 'masterVolume':
-                outputValue = value * 10;
-                break;
-            case 'oscOneVolume':
-                outputValue = value * 10;
-                break;
-            case 'oscTwoVolume':
-                outputValue = value * 10;
-                break;
-            case 'oscOneWave':
-                outputValue = _handleWaveType(value);
-                break;
-            case 'oscTwoWave':
-                outputValue = _handleWaveType(value);
-                break;
-            case 'oscTwoPitch':
-                outputValue = 0 - value;
-                console.log()
-                break;
-        }
-
-        target[0].textContent = outputValue;
-    }
-
-    /**
-     * DUPLICATED FUNCTION: to be removed
-     */
-    function _handleWaveType(int){
-        var rawWaveValue = parseInt(int);
-        switch (rawWaveValue) {
-            case 0:
-                stringWaveValue = 'sine';
-                break;
-            case 1:
-                stringWaveValue = 'square';
-                break;
-            case 2:
-                stringWaveValue = 'sawtooth';
-                break;
-            case 3:
-                stringWaveValue = 'triangle';
-                break;
-        }
-        return stringWaveValue;
-    }
-
-    var publicAPI = {
-        sliderChange: sliderChange
     };
     return publicAPI;
 })();
