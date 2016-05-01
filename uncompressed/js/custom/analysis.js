@@ -18,7 +18,7 @@ function audioAnalysis(context,master){
     // Setup an analyser
     var analyser = context.createAnalyser();
     analyser.fftSize = 2048;
-    analyser.smoothingTimeConstant = 0.3;
+    analyser.smoothingTimeConstant = 0;
     var bufferSize = analyser.frequencyBinCount;
     // Connect the analyser to our master audio output
     master.connect(analyser);
@@ -40,19 +40,7 @@ function audioAnalysis(context,master){
         // analyser.getByteTimeDomainData(array);
 
         var volume = getAverageVolume(array);
-        console.log(volume);
-        redrawVolume(volume)
-        
-        // // Only log the result if there's a signal
-        // var logArray = false;
-        // for (var i = 0; i < array.length; i++) {
-        //     if (array[i] > 128) {// no signal = 128
-        //         logArray = true;
-        //     }
-        // }
-        // if (logArray) {
-        //     console.log(array);
-        // }
+        redrawVolume(volume);
 
     }
 }
@@ -146,36 +134,4 @@ function redrawVolume(float){
             .duration(0001)
             // .attr("y", function(d) { return h - y(d) - .5; })
             .attr('height',function(d){ return h - y(d); });
-
-    // var basicBarData = [];
-
-    // for (var i = 0; i < 100; i++) {
-    //     basicBarData.push(Math.round(Math.random()*100))
-    // };
-
-    // var coloursPreset = d3.scale.category20c();
-
-    // var barOne = DrawBar({
-    //     'data': basicBarData,
-    //     'wrapper': d3.select('.volumeDisplay'),
-    //     'margins': {
-    //         top: 30,
-    //         right: 30,
-    //         bottom: 40,
-    //         left: 50
-    //     },
-    //     'colours': coloursPreset.range(),
-    //     'sort': true
-    // });
-
-    // var canvas = document.getElementById("volumeCanvas");
-    // var canvasCtx = canvas.getContext("2d");
-
-    // var my_gradient = canvasCtx.createLinearGradient(0,0,0,130);
-    // my_gradient.addColorStop(0,"black");
-    // my_gradient.addColorStop(1,"white");
-
-    // canvasCtx.clearRect(0,0,60,130);
-    // canvasCtx.fillStyle = my_gradient;
-    // canvasCtx.fillRect(0,130-float,25,130);
 }
