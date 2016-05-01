@@ -14,4 +14,9 @@
     <!-- <canvas id="volumeCanvas" class="volumeCanvas"></canvas> -->
 </div>
 
+<div class="frequencyDisplayWrapper">
+    <h4>Frequency:</h4>
+    <div id="frequencyDisplay" class="frequencyDisplay"></div>
+</div>
+
 <?php include('footer.php'); ?>

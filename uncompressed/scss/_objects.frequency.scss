@@ -1,0 +1,29 @@
+.frequencyCanvas{
+    border:.2em solid $primary;
+}
+
+.frequencyDisplayWrapper{
+    margin:2em 0;
+    h4{
+        display:block;
+        width:8em;
+
+        line-height:4.5em;
+        float:left;
+    }
+}
+
+.frequencyOutputChart{
+    border:.2em solid $black;
+    // border-radius:.5em;
+    .backgroundWrapper .background{
+        fill:none;//$primary;
+    }
+    .dataWrapper rect{
+        fill:none;//$cream;
+    }
+    path{
+        stroke:$primary;
+        stroke-width:.2em;
+    }
+}
