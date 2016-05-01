@@ -8,4 +8,8 @@
 <h2>Fancy visualisations will go here</h2>
 <p>Now we've got some audio with a <code>context.destination</code>, we can hook that into all sorts of analytical tools&hellip;</p>
 
+<div class="volumeDisplay">
+    <canvas id="volumeCanvas"></canvas>
+</div>
+
 <?php include('footer.php'); ?>

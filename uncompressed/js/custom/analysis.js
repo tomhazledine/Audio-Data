@@ -18,7 +18,7 @@ function audioAnalysis(context,master){
     // Setup an analyser
     var analyser = context.createAnalyser();
     analyser.fftSize = 2048;
-    analyser.smoothingTimeConstant = 0;
+    analyser.smoothingTimeConstant = 0.3;
     var bufferSize = analyser.frequencyBinCount;
     // Connect the analyser to our master audio output
     master.connect(analyser);
@@ -41,6 +41,7 @@ function audioAnalysis(context,master){
 
         var volume = getAverageVolume(array);
         console.log(volume);
+        drawVolume(volume)
         
         // // Only log the result if there's a signal
         // var logArray = false;
@@ -90,4 +91,20 @@ function getAverageVolume(array){
     average = average.toFixed(2);
 
     return average;
+}
+
+/**
+ * DRAW VOLUME OUTPUT
+ */
+function drawVolume(float){
+    var canvas = document.getElementById("volumeCanvas");
+    var canvasCtx = canvas.getContext("2d");
+
+    var my_gradient = canvasCtx.createLinearGradient(0,0,0,170);
+    my_gradient.addColorStop(0,"black");
+    my_gradient.addColorStop(1,"white");
+
+    canvasCtx.clearRect(0,0,60,130);
+    canvasCtx.fillStyle = my_gradient;
+    canvasCtx.fillRect(0,130-float,25,130);
 }
