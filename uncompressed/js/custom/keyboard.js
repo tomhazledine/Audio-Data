@@ -37,7 +37,7 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
     var // Controller Starting Values
         vco2PM = 2, // (PM = Pitch Multiplier)
         vco1wav = 'sine',
-        vco2wav = 'square';
+        vco2wav = 'sine';
 
     /**
      * -----------------------------------
@@ -87,7 +87,7 @@ var MegaSuperSynth = function megaSuperSynth(contextClass){
     // VCO#2 VOLUME
     // Gain node for VCO#2
     var vco2vol = context.createGain();
-    vco2vol.gain.value = 1;
+    vco2vol.gain.value = 0;
 
     // MASTER VCA
     // This is our overall volume control
