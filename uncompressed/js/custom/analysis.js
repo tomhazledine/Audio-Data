@@ -44,9 +44,11 @@ function audioAnalysis(context,master){
         // Calculate the mean value of the frequency frame
         var volume = getAverageVolume(array);
 
+        var parsedArray = parseFreqArray(array);
+
         // Update the volume display
         redrawVolume(volume);
-        redrawFrequency(array);
+        redrawFrequency(parsedArray);
 
     }
 }
@@ -82,9 +84,66 @@ function getAverageVolume(array){
         average = 0;
     }
 
+    // Limit to 2 decimal places
     average = average.toFixed(2);
+    
+    // Remove any negative numbers
+    if (average < 0) {
+        average = 0;
+    }
+
+    // Flatten peaks
+    if (average > 150) {
+        average = 150;
+    }
 
     return average;
+}
+
+/**
+ * -----------------------
+ * PARSE FREQUENCY ARRAY
+ * 
+ * Sanitize the frequency
+ * data to suppress errors
+ * and zoom-in on relevant
+ * part of audio spectrum.
+ * -----------------------
+ */
+function parseFreqArray(array){
+    var result = [];
+
+    // logArray(array);
+
+    // Return only the first X number of array items
+    for (var i = 0; i < 100; i++) {
+        result.push(array[i]);
+    }
+
+    logArray(result);
+
+    return result;
+}
+
+/**
+ * ------------------
+ * LOG ARRAY
+ * 
+ * Only log if array
+ * contains values
+ * greater than zero.
+ * ------------------
+ */
+function logArray(array){
+    var logArray = false;
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] > 0) {
+            logArray = true;
+        }
+    }
+    if (logArray) {
+        console.log(array);
+    }
 }
 
 /**
@@ -114,7 +173,7 @@ var vol_x = d3.scale.linear()
 // our data to the height
 // of our display.
 var vol_y = d3.scale.pow()
-    .domain([0,140])
+    .domain([0,150])
     .rangeRound([0,vol_h]);
 
 // Append an SVG to the DOM node
@@ -244,7 +303,7 @@ var freq_path = frequencyOutputData.append('path');
 // Create a D3 function to set the path's
 // values based on given data.
 line = d3.svg.line()
-    .x(function(d,i){ return (freq_w / 512) * i; })
+    .x(function(d,i){ return (freq_w / 100) * i; })
     .y(function(d){ return freq_h - freq_y(d); })
     .interpolate('monotone');
 
