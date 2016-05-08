@@ -44,7 +44,7 @@ function audioAnalysis(context,master){
         // Calculate the mean value of the frequency frame
         var volume = getAverageVolume(array);
 
-        var parsedArray = parseFreqArray(array);
+        var parsedArray = array;//parseFreqArray(array);
 
         // Update the volume display
         redrawVolume(volume);
@@ -312,8 +312,23 @@ line = d3.svg.line()
 freq_path
     .attr('d',line(placeholderFrequencyData))
     .attr('fill','none')
-    .classed('y1',true)
+    .classed('mainline',true)
     .attr('stroke-width','1px');
+
+// Create an area (path) in our SVG 
+var freq_area = frequencyOutputData.append('path');
+
+areaShape = d3.svg.area()
+    // .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
+    .x(function(d,i){ return (freq_w / 100) * i; })
+    .y0(function(d){ return freq_h - freq_y(0); })
+    .y1(function(d){ return freq_h - freq_y(d); })
+    .interpolate('linear');// monotone | basis | linear | cardinal | bundle
+
+freq_area
+    .attr('d',areaShape(placeholderFrequencyData))
+    .attr('fill','none')
+    .classed('mainarea', true);
 
 // Declare a function that will redraw the line
 // based on input value ("array").
@@ -325,4 +340,6 @@ function redrawFrequency(array){
     // the SVG path.
     freq_path
         .attr('d',line(array));
+    freq_area
+        .attr('d',areaShape(array));
 }

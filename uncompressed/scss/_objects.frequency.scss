@@ -22,8 +22,12 @@
     .dataWrapper rect{
         fill:none;//$cream;
     }
-    path{
+    .mainline{
         stroke:$primary;
-        stroke-width:.2em;
+        stroke-width:.1rem;
+    }
+    .mainarea{
+        stroke:none;
+        fill:rgba($primary,.2);
     }
 }
