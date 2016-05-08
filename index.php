@@ -8,15 +8,19 @@
 <h2>Fancy visualisations will go here</h2>
 <p>Now we've got some audio with a <code>context.destination</code>, we can hook that into all sorts of analytical tools&hellip;</p>
 
-<div class="volumeDisplayWrapper">
+<div class="clearfix">
+    <div id="volumeDisplay" class="volumeDisplay"></div>
+    <div id="frequencyDisplay" class="frequencyDisplay"></div>
+</div>
+
+<!-- <div class="volumeDisplayWrapper">
     <h4>Volume:</h4>
     <div id="volumeDisplay" class="volumeDisplay"></div>
-    <!-- <canvas id="volumeCanvas" class="volumeCanvas"></canvas> -->
 </div>
 
 <div class="frequencyDisplayWrapper">
     <h4>Frequency:</h4>
     <div id="frequencyDisplay" class="frequencyDisplay"></div>
-</div>
+</div> -->
 
 <?php include('footer.php'); ?>

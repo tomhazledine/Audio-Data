@@ -17,15 +17,24 @@ function audioAnalysis(context,master){
     
     // Setup an analyser node
     var volumeAnalyser = context.createAnalyser();
-    volumeAnalyser.fftSize = 2048;
+    // Set our FFT (Fast Fourier Transform) size
+    var fftSize = 1024;
+    volumeAnalyser.fftSize = fftSize;
+    // Get out sample rate (usually 44.1kHz, but we want to be certain as some systems are different)
+    var sampleRate = context.sampleRate;// returns in Hz (not kHz).
+    // Do we want our analyser to smooth the transitions for us?
+    // If we do: set a time value. Otherwise set "0" to have no smoothing.
     volumeAnalyser.smoothingTimeConstant = 0;
+    // The buffer size is the number of "bins" of data
+    // we get (e.g. the number of items in our array).
+    // This will be half the FFT size.
     var bufferSize = volumeAnalyser.frequencyBinCount;
     // Connect the volumeAnalyser to our master audio output
     master.connect(volumeAnalyser);
 
     // Create a Node to listen to the output every
     // 2048 'frames' (a.k.a. 21 times a
-    // second at sample-rate of 44.1k)
+    // second at sample-rate of 44.1kHz)
     listenerNode = context.createScriptProcessor(2048,1,1);
 
     // Connect it to our audio:
@@ -34,15 +43,20 @@ function audioAnalysis(context,master){
     listenerNode.onaudioprocess = function(){
 
         // Create an array to store our data
-        var array = new Uint8Array(volumeAnalyser.frequencyBinCount);
+        var array = new Uint8Array(bufferSize);
         // Get the audio data and store it in our array
         volumeAnalyser.getByteFrequencyData(array);
         // If we wanted information about the waveform
         // rather than the frequency, we would use this:
         // volumeAnalyser.getByteTimeDomainData(array);
+        
+        // Trim data to audible frequencies
+        array = trimFrequencies(array,sampleRate,fftSize);
 
         // Calculate the mean value of the frequency frame
         var volume = getAverageVolume(array);
+
+        logArray(array);
 
         var parsedArray = array;//parseFreqArray(array);
 
@@ -51,6 +65,37 @@ function audioAnalysis(context,master){
         redrawFrequency(parsedArray);
 
     }
+}
+
+/**
+ * -----------------------
+ * TRIM OUR FREQUENCY DATA
+ *
+ * We only want to display
+ * data for frequencies we
+ * can hear (20Hz – 20kHz)
+ * so trim any data above
+ * and below the threshold
+ * -----------------------
+ */
+function trimFrequencies(bins,sampleRate,fftSize){
+    var bottomThreshold = 20;// 20Hz
+    var topThreshold = 20000;// 20kHz
+
+    var result = [];
+
+    for (var i = 0; i < bins.length; i++) {
+        // Calculate the frequency for each "bin".
+        var frequency = i * sampleRate/fftSize;
+        if (frequency > bottomThreshold && frequency < topThreshold) {
+            var output = [];
+            output['frequency'] = frequency;
+            output['value'] = bins[i];// Strength of signal at selected frequency
+            result.push(output);
+        }
+    }
+
+    return result;
 }
 
 /**
@@ -71,8 +116,8 @@ function getAverageVolume(array){
 
     // Sum all the frequency values
     for (var i = 0; i < length; i++) {
-        if (array[i] > 0) {
-            values += array[i];
+        if (array[i]['value'] > 0) {
+            values += array[i]['value'];
             count++;
         }
     }
@@ -117,7 +162,7 @@ function parseFreqArray(array){
 
     // Return only the first X number of array items
     for (var i = 0; i < 100; i++) {
-        result.push(array[i]);
+        result.push(array[i]['value']);
     }
 
     logArray(result);
@@ -160,7 +205,7 @@ function logArray(array){
 // Set the width and height
 // of our display.
 var vol_w = 20,
-    vol_h = 80;
+    vol_h = 100;
 
 // Creat a D3 Scale to map
 // our data to the width of
@@ -245,31 +290,43 @@ function redrawVolume(float){
  * ---------------------
  */
 
+// Placeholder settings/values.
+// Ideally, these would be dynamic
+// but haven't yet figured our how
+// to get the info outside of our
+// analyser scope...
+var SAMPLE_RATE = 44100;
+var FFT_SIZE = 1024;
+var BIN_SIZE = FFT_SIZE / 2;
+var BOTTOM_THRESHOLD = 20;
+var TOP_THRESHOLD = 20000;
 
 // Generate some placeholder data to use
 // when we initialise the graph on-load.
 var placeholderFrequencyData = [];
-for (var i = 0; i < 1024; i++) {
+for (var i = 0; i < BIN_SIZE; i++) {
     placeholderFrequencyData.push(0);
 }
+// Limit our placeholder data to audible frequencies
+placeholderFrequencyData = trimFrequencies(placeholderFrequencyData,SAMPLE_RATE,FFT_SIZE);
 
 // Set the width and height
 // of our display.
-var freq_w = 800,
-    freq_h = 250;
+var freq_w = 600,
+    freq_h = 100;
 
 // Creat a D3 Scale to map
 // our data to the width of
 // our display.
 var freq_x = d3.scale.linear()
-    .domain([0,1])
+    .domain([BOTTOM_THRESHOLD,TOP_THRESHOLD])
     .range([0,freq_w]);
 
 // Creat a D3 Scale to map
 // our data to the height of
 // our display.
 var freq_y = d3.scale.linear()
-    .domain([0,250])
+    .domain([0,255])
     .rangeRound([0,freq_h]);
 
 // Append an SVG to the DOM node
@@ -303,26 +360,24 @@ var freq_path = frequencyOutputData.append('path');
 // Create a D3 function to set the path's
 // values based on given data.
 line = d3.svg.line()
-    .x(function(d,i){ return (freq_w / 100) * i; })
-    .y(function(d){ return freq_h - freq_y(d); })
+    .x(function(d,i){ return freq_x(d['frequency']); })
+    .y(function(d){ return freq_h - freq_y(d['value']); })
     .interpolate('monotone');
 
 // Use the line() function to pass placeholder data
 // into our SVG path
 freq_path
     .attr('d',line(placeholderFrequencyData))
-    .attr('fill','none')
-    .classed('mainline',true)
-    .attr('stroke-width','1px');
+    .classed('mainline',true);
 
 // Create an area (path) in our SVG 
 var freq_area = frequencyOutputData.append('path');
 
 areaShape = d3.svg.area()
     // .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
-    .x(function(d,i){ return (freq_w / 100) * i; })
+    .x(function(d,i){ return freq_x(d['frequency']); })
     .y0(function(d){ return freq_h - freq_y(0); })
-    .y1(function(d){ return freq_h - freq_y(d); })
+    .y1(function(d){ return freq_h - freq_y(d['value']); })
     .interpolate('linear');// monotone | basis | linear | cardinal | bundle
 
 freq_area

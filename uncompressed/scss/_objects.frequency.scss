@@ -15,6 +15,7 @@
 
 .frequencyOutputChart{
     border:.2em solid $black;
+    float:left;
     // border-radius:.5em;
     .backgroundWrapper .background{
         fill:none;//$primary;
@@ -23,6 +24,7 @@
         fill:none;//$cream;
     }
     .mainline{
+        fill:none;
         stroke:$primary;
         stroke-width:.1rem;
     }

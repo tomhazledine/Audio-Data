@@ -15,6 +15,8 @@
 
 .volumeOutputChart{
     border:.2em solid $black;
+    float:left;
+    margin:0 1em 0 0;
     // border-radius:.5em;
     .backgroundWrapper .background{
         fill:$primary;
