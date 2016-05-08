@@ -1,4 +1,20 @@
 /**
+ * -------------------------------
+ * CONSTANTS
+ * 
+ * Ideally, these would be dynamic
+ * but haven't yet figured our how
+ * to get the info outside of our
+ * analyser scope...
+ * -------------------------------
+ */
+var SAMPLE_RATE = 44100;
+var FFT_SIZE = 1024;
+var BIN_SIZE = FFT_SIZE / 2;
+var BOTTOM_THRESHOLD = 10;
+var TOP_THRESHOLD = 20000;
+
+/**
  * ---------------
  * AUDIO ANALYSIS
  *
@@ -18,7 +34,7 @@ function audioAnalysis(context,master){
     // Setup an analyser node
     var volumeAnalyser = context.createAnalyser();
     // Set our FFT (Fast Fourier Transform) size
-    var fftSize = 1024;
+    var fftSize = FFT_SIZE;
     volumeAnalyser.fftSize = fftSize;
     // Get out sample rate (usually 44.1kHz, but we want to be certain as some systems are different)
     var sampleRate = context.sampleRate;// returns in Hz (not kHz).
@@ -79,8 +95,8 @@ function audioAnalysis(context,master){
  * -----------------------
  */
 function trimFrequencies(bins,sampleRate,fftSize){
-    var bottomThreshold = 20;// 20Hz
-    var topThreshold = 20000;// 20kHz
+    var bottomThreshold = BOTTOM_THRESHOLD;// 20Hz
+    var topThreshold = TOP_THRESHOLD;// 20kHz
 
     var result = [];
 
@@ -94,6 +110,11 @@ function trimFrequencies(bins,sampleRate,fftSize){
             result.push(output);
         }
     }
+
+    // var start = [];
+    // start['frequency'] = 0;
+    // start['value'] = 0;
+    // result.unshift(start);
 
     return result;
 }
@@ -290,17 +311,6 @@ function redrawVolume(float){
  * ---------------------
  */
 
-// Placeholder settings/values.
-// Ideally, these would be dynamic
-// but haven't yet figured our how
-// to get the info outside of our
-// analyser scope...
-var SAMPLE_RATE = 44100;
-var FFT_SIZE = 1024;
-var BIN_SIZE = FFT_SIZE / 2;
-var BOTTOM_THRESHOLD = 20;
-var TOP_THRESHOLD = 20000;
-
 // Generate some placeholder data to use
 // when we initialise the graph on-load.
 var placeholderFrequencyData = [];
@@ -318,7 +328,7 @@ var freq_w = 600,
 // Creat a D3 Scale to map
 // our data to the width of
 // our display.
-var freq_x = d3.scale.linear()
+var freq_x = d3.scale.log()
     .domain([BOTTOM_THRESHOLD,TOP_THRESHOLD])
     .range([0,freq_w]);
 
@@ -374,7 +384,7 @@ freq_path
 var freq_area = frequencyOutputData.append('path');
 
 areaShape = d3.svg.area()
-    // .defined(function(d) { return !isNaN(d[settings.yColumn[i]]); })
+    .defined(function(d) { return !isNaN(d['frequency']); })
     .x(function(d,i){ return freq_x(d['frequency']); })
     .y0(function(d){ return freq_h - freq_y(0); })
     .y1(function(d){ return freq_h - freq_y(d['value']); })

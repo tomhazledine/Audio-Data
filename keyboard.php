@@ -28,10 +28,10 @@
             <span>Osc. #2 Volume</span>
             <div class="controlStrip clearfix">
                 <div class="controlStripInner">
-                    <input class="pianoController oscTwoVolume" data-controlName="oscTwoVolume" type="range" min="0" max="1" value="0" step="0.1">
+                    <input class="pianoController oscTwoVolume" data-controlName="oscTwoVolume" type="range" min="0" max="1" value="0.6" step="0.1">
                 </div>
             </div>
-            <span class="controlLabel_oscTwoVolume controlValue">0</span>
+            <span class="controlLabel_oscTwoVolume controlValue">6</span>
         </div>
 
         <div class="controlStripOuter">
@@ -48,10 +48,10 @@
             <span>Osc. #2: Wave</span>
             <div class="controlStrip clearfix">
                 <div class="controlStripInner">
-                    <input class="pianoController oscTwoWave" data-controlName="oscTwoWave" type="range" min="0" max="3" value="0" step="1">
+                    <input class="pianoController oscTwoWave" data-controlName="oscTwoWave" type="range" min="0" max="3" value="3" step="1">
                 </div>
             </div>
-            <span class="controlLabel_oscTwoWave controlValue">Sine</span>
+            <span class="controlLabel_oscTwoWave controlValue">Triangle</span>
         </div>
 
         <div class="controlStripOuter">
