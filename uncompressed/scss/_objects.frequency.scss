@@ -19,7 +19,8 @@
     margin:0 1em 0 0;
     // border-radius:.5em;
     .backgroundWrapper .background{
-        fill:none;//$primary;
+        // fill:none;//$primary;
+        fill:$cream;
     }
     .dataWrapper rect{
         fill:none;//$cream;

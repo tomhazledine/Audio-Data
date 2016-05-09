@@ -11,7 +11,7 @@
 var SAMPLE_RATE = 44100;
 var FFT_SIZE = 1024;
 var BIN_SIZE = FFT_SIZE / 2;
-var BOTTOM_THRESHOLD = 10;
+var BOTTOM_THRESHOLD = 20;
 var TOP_THRESHOLD = 20000;
 
 /**
@@ -72,7 +72,7 @@ function audioAnalysis(context,master){
         // Calculate the mean value of the frequency frame
         var volume = getAverageVolume(array);
 
-        logArray(array);
+        // logArray(array);
 
         var parsedArray = array;//parseFreqArray(array);
 
@@ -100,13 +100,14 @@ function trimFrequencies(bins,sampleRate,fftSize){
 
     var result = [];
 
-    for (var i = 0; i < bins.length; i++) {
+    for (var i = 1; i <= bins.length; i++) {
+        // console.log(i);
         // Calculate the frequency for each "bin".
         var frequency = i * sampleRate/fftSize;
         if (frequency > bottomThreshold && frequency < topThreshold) {
             var output = [];
             output['frequency'] = frequency;
-            output['value'] = bins[i];// Strength of signal at selected frequency
+            output['value'] = bins[i-1];// Strength of signal at selected frequency
             result.push(output);
         }
     }
@@ -203,12 +204,12 @@ function parseFreqArray(array){
 function logArray(array){
     var logArray = false;
     for (var i = 0; i < array.length; i++) {
-        if (array[i] > 0) {
+        if (array[i]['value'] > 0) {
             logArray = true;
         }
     }
     if (logArray) {
-        console.log(array);
+        console.log(array[0]);
     }
 }
 
@@ -336,6 +337,8 @@ var freq_x = d3.scale.log()
 // our data to the height of
 // our display.
 var freq_y = d3.scale.linear()
+    .clamp(true)
+    .nice()
     .domain([0,255])
     .rangeRound([0,freq_h]);
 
@@ -399,6 +402,7 @@ freq_area
 // based on input value ("array").
 // This function gets called by our Analyser.
 function redrawFrequency(array){
+    logArray(array);
 
     // Pass new data into the line() function
     // and use that to set the new points for
