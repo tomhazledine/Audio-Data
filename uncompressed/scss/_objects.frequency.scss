@@ -34,4 +34,8 @@
         stroke:none;
         fill:rgba($primary,.2);
     }
+    .tick{
+        stroke:$primary;
+        stroke-width:.1rem;
+    }
 }

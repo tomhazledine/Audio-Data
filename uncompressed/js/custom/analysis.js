@@ -361,6 +361,16 @@ var frequencyOutputBackground = frequencyOutput.append('g')
             .attr('width',freq_w)
             .attr('height',freq_h);
 
+var xAxis = d3.svg.axis()
+    .scale(freq_x)
+    .orient("bottom")
+    .ticks(20, ",.1s");
+    // .tickSize(6, 0);
+
+frequencyOutputBackground.append("g")
+    .attr("class", "x axis")
+    .call(xAxis);
+
 // Add a "group" to contain our dynamic shapes
 var frequencyOutputData = frequencyOutput.append('g')
     .attr('class','dataWrapper')
@@ -402,7 +412,7 @@ freq_area
 // based on input value ("array").
 // This function gets called by our Analyser.
 function redrawFrequency(array){
-    logArray(array);
+    // logArray(array);
 
     // Pass new data into the line() function
     // and use that to set the new points for
