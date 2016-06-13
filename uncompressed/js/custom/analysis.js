@@ -364,6 +364,7 @@ var frequencyOutputBackground = frequencyOutput.append('g')
 var xAxis = d3.svg.axis()
     .scale(freq_x)
     .orient("bottom")
+    .tickFormat(d3.format())
     .ticks(20, ",.1s");
     // .tickSize(6, 0);
 
