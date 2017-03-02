@@ -595,15 +595,19 @@ var noQuery = (function(){
 var controlsWrapper = document.getElementById('synthControls');
 var keysWrapper = document.getElementById('synthKeys');
 
-// determine if Web Audio API is available
-// (`contextClass` will return `false` if
-// the API is not supported).
-var contextClass = (window.AudioContext || window.webkitAudioContext);
+// console.log(controlsWrapper);
+
+if (typeof controlsWrapper !== 'undefined') {
+    // determine if Web Audio API is available
+    // (`contextClass` will return `false` if
+    // the API is not supported).
+    var contextClass = (window.AudioContext || window.webkitAudioContext);
 
 
-if (contextClass) {
-    // Initialise the audio functions
-    var newSynth = MegaSuperSynth(contextClass);
-    // Initialise the input controls
-    var newSynthInputs = MegaSuperSynthInputs(controlsWrapper,keysWrapper);
+    if (contextClass) {
+        // Initialise the audio functions
+        var newSynth = MegaSuperSynth(contextClass);
+        // Initialise the input controls
+        var newSynthInputs = MegaSuperSynthInputs(controlsWrapper,keysWrapper);
+    }
 }
