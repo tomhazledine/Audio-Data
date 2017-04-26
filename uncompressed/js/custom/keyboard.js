@@ -593,11 +593,13 @@ var noQuery = (function(){
 
 // Set our DOM elements:
 var controlsWrapper = document.getElementById('synthControls');
-var keysWrapper = document.getElementById('synthKeys');
 
-// console.log(controlsWrapper);
+console.log(controlsWrapper);
 
-if (typeof controlsWrapper !== 'undefined') {
+if (typeof controlsWrapper !== undefined && controlsWrapper !== null) {
+
+    var keysWrapper = document.getElementById('synthKeys');
+
     // determine if Web Audio API is available
     // (`contextClass` will return `false` if
     // the API is not supported).
