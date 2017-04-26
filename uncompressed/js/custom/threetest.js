@@ -7,23 +7,24 @@ if ( typeof three_container != 'undefined' ) {
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize( three_container.offsetWidth, three_container.offsetHeight );
-    renderer.setClearColor(0x000000);
+    renderer.setClearColor(0xffffff);
     three_container.appendChild( renderer.domElement );
 
-    var light = new THREE.AmbientLight(0xffffff,0.5);
+    var light = new THREE.AmbientLight(0xffffff,0.3);
+    light.position.y = -1000;
     scene.add(light);
 
-    var light2 = new THREE.PointLight(0xffffff,0.5);
+    var light2 = new THREE.PointLight(0xffffff,1);
     light2.position.y = 100;
-    light2.position.z = 100;
+    light2.position.x = -100;
     scene.add(light2);
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var geometry = new THREE.BoxGeometry( 2, .1, 2 );
     var material = new THREE.MeshLambertMaterial( { color: 0xd03ff0 } );
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
 
-    camera.position.z = 5;
+    camera.position.z = 3;
 
     var render = function () {
         requestAnimationFrame( render );
