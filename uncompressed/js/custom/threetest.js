@@ -20,12 +20,25 @@ if ( typeof three_container != 'undefined' ) {
     light2.position.z = 100;
     scene.add(light2);
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var geometry = new THREE.BoxGeometry( 10, 10, 10 );
     var material = new THREE.MeshLambertMaterial( { color: 0x00b7c6 } );
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
 
-    camera.position.z = 3;
+    camera.position.set(0, 0, 20);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    //create a blue LineBasicMaterial
+    var line_material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+
+    var line_geometry = new THREE.Geometry();
+    line_geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+    line_geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+    line_geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+
+    var line = new THREE.Line(line_geometry, line_material);
+
+    scene.add(line);
 
     var render = function () {
         requestAnimationFrame( render );
