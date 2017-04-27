@@ -16,11 +16,12 @@ if ( typeof three_container != 'undefined' ) {
 
     var light2 = new THREE.PointLight(0xffffff,1);
     light2.position.y = 100;
-    light2.position.x = -100;
+    light2.position.x = 100;
+    light2.position.z = 100;
     scene.add(light2);
 
-    var geometry = new THREE.BoxGeometry( 2, .1, 2 );
-    var material = new THREE.MeshLambertMaterial( { color: 0xd03ff0 } );
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var material = new THREE.MeshLambertMaterial( { color: 0x00b7c6 } );
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
 
