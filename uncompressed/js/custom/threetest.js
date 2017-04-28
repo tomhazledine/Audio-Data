@@ -21,7 +21,7 @@ if ( typeof three_container != 'undefined' ) {
     scene.add(light2);
 
     var geometry = new THREE.IcosahedronGeometry(5, 1);
-    var material = new THREE.MeshLambertMaterial( {color: 0x00b7c6, wireframe: true} );
+    var material = new THREE.MeshLambertMaterial( {color: 0x00b7c6, wireframe: false} );
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
 
@@ -39,6 +39,12 @@ if ( typeof three_container != 'undefined' ) {
     // var line = new THREE.Line(line_geometry, line_material);
 
     // scene.add(line);
+    // 
+    
+    // Add an orbit control which allows us to move around the scene. See the three.js example for more details
+    // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
 
     var render = function () {
         requestAnimationFrame( render );
