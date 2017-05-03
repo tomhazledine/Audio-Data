@@ -5,7 +5,7 @@ if ( typeof three_container != 'undefined' ) {
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, three_container.offsetWidth/three_container.offsetHeight, 0.1, 1000 );
 
-    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    var renderer = new THREE.WebGLRenderer({ alpha:true, antialias: true });
     renderer.setSize( three_container.offsetWidth, three_container.offsetHeight );
     renderer.setClearColor(0xffffff);
     three_container.appendChild( renderer.domElement );
@@ -26,21 +26,19 @@ if ( typeof three_container != 'undefined' ) {
 
     // Add a point light that will cast shadows
     var pointLight = new THREE.PointLight( 0xffffff, 1 );
-    pointLight.position.set( 25, 50, 25 );
+    pointLight.position.set( 250, 500, 250 );
     pointLight.castShadow = true;
     pointLight.shadow.mapSize.width = 1024;
     pointLight.shadow.mapSize.height = 1024;
     scene.add( pointLight );
 
-    // A basic material that shows the geometry wireframe.
-    var shadowMaterial = new THREE.ShadowMaterial( { color: 0xeeeeee } );
-    shadowMaterial.opacity = 0.5;
-    var groundMesh = new THREE.Mesh(
-        new THREE.BoxGeometry( 100, .1, 100 ),
-        shadowMaterial
-    );
-    groundMesh.receiveShadow = true;
-    scene.add( groundMesh );
+    // Add a second point light that will cast shadows
+    var pointLight_2 = new THREE.PointLight( 0xffffff, 1 );
+    pointLight_2.position.set( -250, 500, 250 );
+    pointLight_2.castShadow = true;
+    pointLight_2.shadow.mapSize.width = 1024;
+    pointLight_2.shadow.mapSize.height = 1024;
+    scene.add( pointLight_2 );
 
     // // A simple geometric shape with a flat material
     // var shapeOne = new THREE.Mesh(
@@ -73,22 +71,39 @@ if ( typeof three_container != 'undefined' ) {
     // shapeTwo.castShadow = true;
     // scene.add(shapeTwo);
 
-    var geometry = new THREE.IcosahedronGeometry(5, 1);
+    var geometry = new THREE.IcosahedronGeometry(50, 1);
     // var material = new THREE.MeshLambertMaterial( {color: 0x00b7c6, wireframe: false} );
     var material = new THREE.MeshStandardMaterial({
             color: 0x47689b,
             shading: THREE.FlatShading ,
             metalness: 0,
-            roughness: 0.8
+            roughness: 0.8,
+            wireframe: true
         });
     var cube = new THREE.Mesh( geometry, material );
-    cube.position.y += 5;
+    cube.position.y += 50;
     // cube.position.x += 15;
-    cube.rotateZ(Math.PI/5);
+    cube.rotateZ(Math.PI/50);
     cube.castShadow = true;
     scene.add( cube );
 
-    camera.position.set(0, 10, 20);
+    // A basic material that shows the geometry wireframe.
+    var test_material = new THREE.MeshStandardMaterial({
+            color: 0x47689b,
+            shading: THREE.FlatShading ,
+            metalness: 0,
+            roughness: 0.8
+        });
+    var shadowMaterial = new THREE.ShadowMaterial( { color: 0xeeeeff } );
+    shadowMaterial.opacity = 0.5;
+    var groundMesh = new THREE.Mesh(
+        new THREE.BoxGeometry( 500, .1, 500 ),
+        test_material
+    );
+    groundMesh.receiveShadow = true;
+    scene.add( groundMesh );
+
+    camera.position.set(0, 100, 200);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Enable shadow mapping
