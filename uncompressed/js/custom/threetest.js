@@ -26,18 +26,18 @@ if ( typeof three_container != 'undefined' ) {
 
     // Add a point light that will cast shadows
     var pointLight = new THREE.PointLight( 0xffffff, 1 );
-    pointLight.position.set( 250, 500, 250 );
+    pointLight.position.set( 400, 500, 500 );
     pointLight.castShadow = true;
-    pointLight.shadow.mapSize.width = 1024;
-    pointLight.shadow.mapSize.height = 1024;
+    pointLight.shadow.mapSize.width = 2048;
+    pointLight.shadow.mapSize.height = 2048;
     scene.add( pointLight );
 
     // Add a second point light that will cast shadows
     var pointLight_2 = new THREE.PointLight( 0xffffff, 1 );
-    pointLight_2.position.set( -250, 500, 250 );
+    pointLight_2.position.set( -250, 250, 100 );
     pointLight_2.castShadow = true;
-    pointLight_2.shadow.mapSize.width = 1024;
-    pointLight_2.shadow.mapSize.height = 1024;
+    pointLight_2.shadow.mapSize.width = 2048;
+    pointLight_2.shadow.mapSize.height = 2048;
     scene.add( pointLight_2 );
 
     // // A simple geometric shape with a flat material
