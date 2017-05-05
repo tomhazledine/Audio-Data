@@ -26,62 +26,60 @@ if ( typeof three_container != 'undefined' ) {
 
     // Add a point light that will cast shadows
     var pointLight = new THREE.PointLight( 0xffffff, 1 );
-    pointLight.position.set( 400, 500, 500 );
+    pointLight.position.set( 100, 250, 250 );
     pointLight.castShadow = true;
-    pointLight.shadow.mapSize.width = 2048;
-    pointLight.shadow.mapSize.height = 2048;
+    pointLight.shadow.mapSize.width = 1024;
+    pointLight.shadow.mapSize.height = 1024;
     scene.add( pointLight );
 
     // Add a second point light that will cast shadows
     var pointLight_2 = new THREE.PointLight( 0xffffff, 1 );
-    pointLight_2.position.set( -250, 250, 100 );
+    pointLight_2.position.set( -100, 200, 100 );
     pointLight_2.castShadow = true;
-    pointLight_2.shadow.mapSize.width = 2048;
-    pointLight_2.shadow.mapSize.height = 2048;
+    pointLight_2.shadow.mapSize.width = 1024;
+    pointLight_2.shadow.mapSize.height = 1024;
     scene.add( pointLight_2 );
 
-    // // A simple geometric shape with a flat material
-    // var shapeOne = new THREE.Mesh(
-    //     new THREE.OctahedronGeometry(10,1),
-    //     new THREE.MeshStandardMaterial( {
-    //         color: 0xff0051,
-    //         shading: THREE.FlatShading ,
-    //         metalness: 0,
-    //         roughness: 0.8
-    //     } )
-    // );
-    // shapeOne.position.y += 10;
-    // shapeOne.rotateZ(Math.PI/3);
+    // A simple geometric shape with a flat material
+    var shapeOne = new THREE.Mesh(
+        new THREE.BoxGeometry(10,10,10),
+        new THREE.MeshStandardMaterial( {
+            color: 0xff0051,
+            shading: THREE.FlatShading ,
+            metalness: 0,
+            roughness: 0.8
+        } )
+    );
+    shapeOne.position.set( -100, 200, 100 );
     // shapeOne.castShadow = true;
-    // scene.add(shapeOne);
+    scene.add(shapeOne);
 
-    // // Add a second shape
-    // var shapeTwo = new THREE.Mesh(
-    //     new THREE.OctahedronGeometry(5,1),
-    //     new THREE.MeshStandardMaterial({
-    //         color: 0x47689b,
-    //         shading: THREE.FlatShading ,
-    //         metalness: 0,
-    //         roughness: 0.8
-    //     })
-    // );
-    // shapeTwo.position.y += 5;
-    // shapeTwo.position.x += 15;
-    // shapeTwo.rotateZ(Math.PI/5);
+    // Add a second shape
+    var shapeTwo = new THREE.Mesh(
+        new THREE.BoxGeometry(10,10,10),
+        new THREE.MeshStandardMaterial({
+            color: 0x47689b,
+            shading: THREE.FlatShading ,
+            metalness: 0,
+            roughness: 0.8
+        })
+    );
+    shapeTwo.position.set( 100, 250, 250 );
     // shapeTwo.castShadow = true;
-    // scene.add(shapeTwo);
+    scene.add(shapeTwo);
 
-    var geometry = new THREE.IcosahedronGeometry(50, 1);
+    var geometry = new THREE.IcosahedronGeometry(20, 1);
     // var material = new THREE.MeshLambertMaterial( {color: 0x00b7c6, wireframe: false} );
     var material = new THREE.MeshStandardMaterial({
             color: 0x47689b,
             shading: THREE.FlatShading ,
             metalness: 0,
             roughness: 0.8,
-            wireframe: true
+            // wireframe: true
         });
     var cube = new THREE.Mesh( geometry, material );
-    cube.position.y += 50;
+    // cube.position.y += 50;
+    cube.position.set( 0, 75, 0 );
     // cube.position.x += 15;
     cube.rotateZ(Math.PI/50);
     cube.castShadow = true;
@@ -103,12 +101,12 @@ if ( typeof three_container != 'undefined' ) {
     groundMesh.receiveShadow = true;
     scene.add( groundMesh );
 
-    camera.position.set(0, 100, 200);
+    camera.position.set(0, 100, 100);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Enable shadow mapping
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     // //create a blue LineBasicMaterial
     // var line_material = new THREE.LineBasicMaterial({ color: 0x0000ff });
