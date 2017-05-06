@@ -92,7 +92,7 @@ if ( typeof three_container != 'undefined' ) {
             metalness: 0,
             roughness: 0.8
         });
-    var shadowMaterial = new THREE.ShadowMaterial( { color: 0xeeeeff } );
+    var shadowMaterial = new THREE.ShadowMaterial();
     shadowMaterial.opacity = 0.5;
     var groundMesh = new THREE.Mesh(
         new THREE.BoxGeometry( 500, .1, 500 ),
@@ -102,7 +102,7 @@ if ( typeof three_container != 'undefined' ) {
     scene.add( groundMesh );
 
     camera.position.set(0, 100, 100);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.lookAt(new THREE.Vector3(0, 20, 0));
 
     // Enable shadow mapping
     renderer.shadowMap.enabled = true;
@@ -119,7 +119,20 @@ if ( typeof three_container != 'undefined' ) {
     // var line = new THREE.Line(line_geometry, line_material);
 
     // scene.add(line);
-    // 
+    //
+    
+    var cylinder_geometry = new THREE.CylinderGeometry( 50, 50, 20, 32 );
+    var cylinder_material = new THREE.MeshStandardMaterial( {
+        color: 0x47689b,
+        shading: THREE.FlatShading
+    } );
+    var cylinder = new THREE.Mesh( cylinder_geometry, cylinder_material );
+    cylinder.position.set(0, 30, 30);
+    cylinder.openended = true;
+    cylinder.thetaLength = 10;
+    cylinder.receiveShadow = true;
+    cylinder.castShadow = true;
+    scene.add( cylinder );
     
     // Add an orbit control which allows us to move around the scene. See the three.js example for more details
     // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.
