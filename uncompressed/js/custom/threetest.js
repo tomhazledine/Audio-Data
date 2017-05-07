@@ -79,7 +79,7 @@ if ( typeof three_container != 'undefined' ) {
         });
     var cube = new THREE.Mesh( geometry, material );
     // cube.position.y += 50;
-    cube.position.set( 0, 75, 0 );
+    cube.position.set( 0, 25, 0 );
     // cube.position.x += 15;
     cube.rotateZ(Math.PI/50);
     cube.castShadow = true;
@@ -101,8 +101,8 @@ if ( typeof three_container != 'undefined' ) {
     groundMesh.receiveShadow = true;
     scene.add( groundMesh );
 
-    camera.position.set(0, 100, 100);
-    camera.lookAt(new THREE.Vector3(0, 20, 0));
+    camera.position.set(0, 30, 80);
+    camera.lookAt(new THREE.Vector3(0, 45, 0));
 
     // Enable shadow mapping
     renderer.shadowMap.enabled = true;
@@ -121,17 +121,20 @@ if ( typeof three_container != 'undefined' ) {
     // scene.add(line);
     //
     
-    var cylinder_geometry = new THREE.CylinderGeometry( 50, 50, 20, 32 );
-    var cylinder_material = new THREE.MeshStandardMaterial( {
-        color: 0x47689b,
+    var cylinder_geometry = new THREE.CylinderGeometry( 24, 24, 6, 20, 10, true );
+    cylinder_geometry.openEnded = true;
+    // cylinder_geometry.thetaLength = 3;
+    var cylinder_material = new THREE.MeshPhongMaterial( {
+        color: 0x156289,
+        // emissive: 0x072534,
+        side: THREE.DoubleSide,
         shading: THREE.FlatShading
     } );
     var cylinder = new THREE.Mesh( cylinder_geometry, cylinder_material );
-    cylinder.position.set(0, 30, 30);
-    cylinder.openended = true;
-    cylinder.thetaLength = 10;
+    cylinder.position.set(0, 25, 0);
     cylinder.receiveShadow = true;
     cylinder.castShadow = true;
+    console.log(cylinder);
     scene.add( cylinder );
     
     // Add an orbit control which allows us to move around the scene. See the three.js example for more details
@@ -144,6 +147,10 @@ if ( typeof three_container != 'undefined' ) {
 
         cube.rotation.x += 0.01;
         cube.rotation.y += 0.01;
+
+        cylinder.rotation.x -= 0.01;
+        cylinder.rotation.z -= 0.01;
+        // cylinder.rotation.y += 0.01;
 
         renderer.render(scene, camera);
     };
