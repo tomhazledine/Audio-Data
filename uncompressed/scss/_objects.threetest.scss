@@ -1,5 +1,7 @@
 .three-test{
-    width:60em;
-    height:40em;
-    background:rgba(black,.2);
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:linear-gradient($primary, $white);
 }
