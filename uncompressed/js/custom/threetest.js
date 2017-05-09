@@ -259,9 +259,10 @@ function loop(){
     // sea.mesh.rotation.z += .05;
     sea.moveWaves();
 
-    plane_object.rotation.x += .005;
-    plane_object.rotation.y += .005;
-    plane_object.rotation.z += .005;
+    // plane_object.rotation.x += .005;
+    // plane_object.rotation.y += .005;
+    // plane_object.rotation.z += .005;
+    
     // sphere.mesh.rotation.x += .005;
     // sphere.mesh.rotation.y += .005;
     // sphere.mesh.rotation.z += .005;
