@@ -31,7 +31,8 @@ function init() {
     // add the objects
     // createPlane();
     createSea();
-    createSphere();
+    // createSphere();
+    createPlane();
     // createSky();
 
     // start a loop that will update the objects' positions 
@@ -194,8 +195,8 @@ Sea = function(){
     };
     var mat = new THREE.MeshPhongMaterial({
         color:colours.blue,
-        transparent:true,
-        opacity:.8,
+        // transparent:true,
+        // opacity:.8,
         shading:THREE.FlatShading,
         // wireframe:true
     });
@@ -260,7 +261,8 @@ function loop(){
     // sphere.mesh.rotation.x += .005;
     // sphere.mesh.rotation.y += .005;
     // sphere.mesh.rotation.z += .005;
-    sphere.moveWaves();
+    // sphere.moveWaves();
+    plane.moveWaves();
     // sky.mesh.rotation.z += .01;
 
     // render the scene
@@ -332,13 +334,17 @@ Sphere.prototype.moveWaves = function (){
     
     for (var i=0; i<l; i++){
         var v = verts[i];
+
+        if ( i == 0 ) {
+            console.log(this.waves[i]);
+        }
         
         // get the data associated to it
         var vprops = this.waves[i];
         
         // update the position of the vertex
-        // v.x = vprops.x + ( 0.5 * Math.cos(vprops.ang)*vprops.amp );
-        // v.y = vprops.y + ( 0.5 * Math.sin(vprops.ang)*vprops.amp );
+        v.x = vprops.x + ( 0.5 * Math.cos(vprops.ang)*vprops.amp );
+        v.y = vprops.y + ( 0.5 * Math.sin(vprops.ang)*vprops.amp );
         // v.x = vprops.x + vprops.ang*vprops.amp;
         // v.y = vprops.y + vprops.ang*vprops.amp;
 
@@ -357,6 +363,94 @@ Sphere.prototype.moveWaves = function (){
     this.mesh.rotation.y += .005;
     this.mesh.rotation.z += .005;
 }
+
+Plane = function(){
+
+    var geom = new THREE.PlaneGeometry(64,64,32,32);
+    geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+
+    // important: by merging vertices we ensure the continuity of the waves
+    geom.mergeVertices();
+
+    // get the vertices
+    var l = geom.vertices.length;
+
+    // create an array to store new data associated to each vertex
+    this.waves = [];
+
+    for (var i=0; i<l; i++){
+        // get each vertex
+        var v = geom.vertices[i];
+
+        // store some data associated to it
+        this.waves.push({
+            y:v.y,
+            x:v.x,
+            z:v.z,
+            // a random angle
+            ang:Math.random()*Math.PI*2,
+            // a random distance
+            amp:5 + Math.random()*15,
+            // a random speed between 0.016 and 0.048 radians / frame
+            speed:0.016 + Math.random()*0.032
+        });
+    };
+    var mat = new THREE.MeshPhongMaterial({
+        color:colours.blue,
+        shading:THREE.FlatShading
+    });
+
+    this.mesh = new THREE.Mesh(geom, mat);
+    this.mesh.receiveShadow = true;
+
+}
+
+function createPlane() {
+    plane = new Plane();
+
+    // push it a little bit at the bottom of the scene
+    plane.mesh.position.set(0, 150, -100);
+
+    plane.mesh.receiveShadow = true;
+    plane.mesh.castShadow = true;
+
+    // add the mesh of the sea to the scene
+    scene.add(plane.mesh);
+}
+
+Plane.prototype.moveWaves = function (){
+    
+    // get the vertices
+    var verts = this.mesh.geometry.vertices;
+    var l = verts.length;
+    
+    for (var i=0; i<l; i++){
+        var v = verts[i];
+        
+        // get the data associated to it
+        var vprops = this.waves[i];
+        
+        // update the position of the vertex
+        // v.x = vprops.x + Math.cos(vprops.ang)*vprops.amp;
+        // v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+
+        // increment the angle for the next frame
+        vprops.ang += vprops.speed;
+
+    }
+
+    // Tell the renderer that the geometry of the sea has changed.
+    // In fact, in order to maintain the best level of performance, 
+    // three.js caches the geometries and ignores any changes
+    // unless we add this line
+    this.mesh.geometry.verticesNeedUpdate=true;
+
+    this.mesh.rotation.x += .005;
+    this.mesh.rotation.y += .005;
+    this.mesh.rotation.z += .005;
+}
+
+
 // --- //
 
 
