@@ -71,7 +71,7 @@ function createScene(container) {
     // Set the position of the camera
     camera.position.x = 0;
     camera.position.z = 200;
-    camera.position.y = 100;
+    camera.position.y = 150;
     
     // Create the renderer
     renderer = new THREE.WebGLRenderer({ 
@@ -427,13 +427,13 @@ function createPlane() {
     plane_object = new THREE.Object3D();
     scene.add( plane_object );
 
-    var side_one_geometry = new THREE.PlaneGeometry(64,64,32,32);
+    var side_one_geometry = new THREE.PlaneGeometry(256,256,32,32);
 
-    var side_two_geometry = new THREE.PlaneGeometry(64,64,32,32);
+    var side_two_geometry = new THREE.PlaneGeometry(256,256,32,32);
     side_two_geometry.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
 
     var material = new THREE.MeshPhongMaterial({
-        color:colours.blue,
+        color:colours.red,
         shading:THREE.FlatShading
     });
 
@@ -450,7 +450,9 @@ function createPlane() {
 
     plane_object.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 
-    plane_object.position.set(0, 150, -100);
+    mesh2.position.set(0, 0, -1);
+
+    plane_object.position.set(0, 100, -100);
 
 
 }
