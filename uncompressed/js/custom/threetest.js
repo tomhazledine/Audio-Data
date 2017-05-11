@@ -110,7 +110,7 @@ function handleWindowResize() {
     camera.updateProjectionMatrix();
 }
 
-var hemisphereLight, shadowLight;
+var hemisphereLight, shadowLight, pointLight;
 
 function createLights() {
     // A hemisphere light is a gradient colored light; 
@@ -140,10 +140,16 @@ function createLights() {
     // but also the more expensive and less performant
     shadowLight.shadow.mapSize.width = 2048;
     shadowLight.shadow.mapSize.height = 2048;
+
+    pointLight = new THREE.DirectionalLight(0xffffff, .9);
+    pointLight.position.set(-150, 150, 150);
+    pointLight.castShadow = true;
+
     
     // to activate the lights, just add them to the scene
     scene.add(hemisphereLight);  
     scene.add(shadowLight);
+    scene.add(pointLight);
 }
 
 var sea_radius = 5000;
