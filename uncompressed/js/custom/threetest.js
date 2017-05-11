@@ -20,6 +20,8 @@ var colours = {
     fog:0xefeeeb
 };
 
+var plane;
+
 // Manage all the 3D functions with an initialization function.
 function init() {
     // set up the scene, the camera and the renderer
@@ -32,7 +34,7 @@ function init() {
     // createPlane();
     createSea();
     // createSphere();
-    createPlane();
+    plane = createPlane();
     // createSky();
 
     // start a loop that will update the objects' positions 
@@ -282,6 +284,7 @@ function loop(){
     // sphere.mesh.rotation.z += .005;
     // sphere.moveWaves();
     // plane.moveWaves();
+    pulse_plane(plane);
     // sky.mesh.rotation.z += .01;
 
     // render the scene
@@ -442,9 +445,9 @@ function createPlane() {
     plane_object = new THREE.Object3D();
     scene.add( plane_object );
 
-    var side_one_geometry = new THREE.PlaneGeometry(256,256,32,32);
+    var side_one_geometry = new THREE.PlaneGeometry(256,256,12,12);
 
-    var side_two_geometry = new THREE.PlaneGeometry(256,256,32,32);
+    var side_two_geometry = new THREE.PlaneGeometry(256,256,12,12);
     side_two_geometry.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
 
     var material = new THREE.MeshPhongMaterial({
@@ -469,7 +472,41 @@ function createPlane() {
 
     plane_object.position.set(0, 100, -100);
 
+    return plane_object;
 
+
+}
+
+function pulse_plane( plane ) {
+    var target_1 = plane.children[0];
+    var target_2 = plane.children[1];
+    var vertices_1 = target_1.geometry.vertices;
+    var vertices_2 = target_2.geometry.vertices;
+
+    for ( var i = 0; i < vertices_1.length; i++ ){
+        var v = vertices_1[i];
+        var v2 = vertices_2[i];
+        
+        // get the data associated to it
+        // var vprops = this.waves[i];
+        
+        // update the position of the vertex
+        var rand = Math.random() * 10;
+        v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
+        v2.z = (v2.z / 2 ) + (rand / 2);
+        // v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+
+        // increment the angle for the next frame
+        // vprops.ang += vprops.speed;
+
+    }
+
+    // Tell the renderer that the geometry of the sea has changed.
+    // In fact, in order to maintain the best level of performance, 
+    // three.js caches the geometries and ignores any changes
+    // unless we add this line
+    target_1.geometry.verticesNeedUpdate=true;
+    target_2.geometry.verticesNeedUpdate=true;
 }
 
 // Plane.prototype.moveWaves = function (){
