@@ -125,7 +125,7 @@ function createLights() {
     shadowLight = new THREE.DirectionalLight(0xffffff, .9);
 
     // Set the direction of the light  
-    shadowLight.position.set(100, 0, 0);
+    shadowLight.position.set(50, 0, 0);
     
     // Allow shadow casting 
     shadowLight.castShadow = true;
@@ -143,8 +143,8 @@ function createLights() {
     shadowLight.shadow.mapSize.width = 2048;
     shadowLight.shadow.mapSize.height = 2048;
 
-    pointLight = new THREE.DirectionalLight(0xffffff, .3);
-    pointLight.position.set(150, 200, 0);
+    pointLight = new THREE.DirectionalLight(0xffffff, .6);
+    pointLight.position.set(100, 100, 0);
     pointLight.castShadow = true;
     pointLight.shadow.camera.left = -400;
     pointLight.shadow.camera.right = 400;
