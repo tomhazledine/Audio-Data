@@ -35,11 +35,17 @@ function init() {
     createSea();
     // createSphere();
     plane = createPlane();
+    pulse_plane(plane);
     // createSky();
 
     // start a loop that will update the objects' positions 
     // and render the scene on each frame
     loop();
+
+    // Add an orbit control which allows us to move around the scene. See the three.js example for more details
+    // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.
+    // var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    // controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
 }
 
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer;
@@ -284,7 +290,7 @@ function loop(){
     // sphere.mesh.rotation.z += .005;
     // sphere.moveWaves();
     // plane.moveWaves();
-    pulse_plane(plane);
+    // pulse_plane(plane);
     // sky.mesh.rotation.z += .01;
 
     // render the scene
@@ -445,9 +451,11 @@ function createPlane() {
     plane_object = new THREE.Object3D();
     scene.add( plane_object );
 
-    var side_one_geometry = new THREE.PlaneGeometry(256,256,12,12);
+    var point_count = 6;
 
-    var side_two_geometry = new THREE.PlaneGeometry(256,256,12,12);
+    var side_one_geometry = new THREE.PlaneGeometry(256,256,point_count,point_count);
+
+    var side_two_geometry = new THREE.PlaneGeometry(256,256,point_count,point_count);
     side_two_geometry.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
 
     var material = new THREE.MeshPhongMaterial({
@@ -462,7 +470,7 @@ function createPlane() {
     plane_object.add( mesh1 );
     
     mesh2 = new THREE.Mesh( side_two_geometry, material );
-    mesh2.receiveShadow = true;
+    // mesh2.receiveShadow = true;
     mesh2.castShadow = true;
     plane_object.add( mesh2 );
 
@@ -485,13 +493,13 @@ function pulse_plane( plane ) {
 
     for ( var i = 0; i < vertices_1.length; i++ ){
         var v = vertices_1[i];
-        var v2 = vertices_2[i];
+        var v2 = vertices_2[vertices_1.length - (i + 1)];
         
         // get the data associated to it
         // var vprops = this.waves[i];
         
         // update the position of the vertex
-        var rand = Math.random() * 10;
+        var rand = Math.random() * 100;
         v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
         v2.z = (v2.z / 2 ) + (rand / 2);
         // v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
