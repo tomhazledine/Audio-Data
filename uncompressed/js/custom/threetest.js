@@ -281,9 +281,9 @@ function loop(){
     // sea.mesh.rotation.z += .05;
     sea.moveWaves();
 
-    // plane_object.rotation.x += .005;
-    // plane_object.rotation.y += .005;
-    // plane_object.rotation.z += .005;
+    plane_object.rotation.x += .005;
+    plane_object.rotation.y += .005;
+    plane_object.rotation.z += .005;
     
     // sphere.mesh.rotation.x += .005;
     // sphere.mesh.rotation.y += .005;
@@ -460,7 +460,8 @@ function createPlane() {
 
     var material = new THREE.MeshPhongMaterial({
         color:colours.red,
-        shading:THREE.FlatShading
+        shading:THREE.FlatShading,
+        side:THREE.DoubleSide
     });
 
     // mesh
@@ -499,9 +500,12 @@ function pulse_plane( plane ) {
         // var vprops = this.waves[i];
         
         // update the position of the vertex
-        var rand = Math.random() * 100;
-        v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
-        v2.z = (v2.z / 2 ) + (rand / 2);
+        // var rand = Math.random() * 100;
+        // v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
+        // v2.z = (v2.z / 2 ) + (rand / 2);
+
+        v.z = 2 * i;
+        // v2.z = 2 * i;
         // v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
 
         // increment the angle for the next frame
