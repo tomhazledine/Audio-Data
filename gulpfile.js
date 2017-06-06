@@ -3,8 +3,10 @@ var gulp         = require('gulp');
 
 // Include Our Plugins
 var autoprefixer = require('gulp-autoprefixer');
+var babel        = require("gulp-babel");
 var cache        = require('gulp-cache');
 var concat       = require('gulp-concat');
+var gutil        = require('gulp-util');
 var imagemin     = require('gulp-imagemin');
 var jshint       = require('gulp-jshint');
 var livereload   = require('gulp-livereload');
@@ -14,11 +16,12 @@ var rename       = require('gulp-rename');
 var sass         = require('gulp-sass');
 var scsslint     = require('gulp-scss-lint');
 var size         = require('gulp-size');
+var sourcemaps   = require('gulp-sourcemaps');
 var svgSprite    = require('gulp-svg-sprite');
 var uglify       = require('gulp-uglify');
-var gutil        = require('gulp-util');
 var lr           = require('tiny-lr');
 var server       = lr();
+
 
 // This will handle our errors
 var onError = function (err) {
@@ -53,12 +56,15 @@ gulp.task('scripts', function() {
     .pipe(plumber({
         errorHandler: onError
     }))
+    .pipe(sourcemaps.init())
+    .pipe(babel())
     .pipe(concat('app.js'))
     .pipe(size({title: 'js'}))
     .pipe(gulp.dest('assets/js'))
     .pipe(rename('app.min.js'))
     .pipe(uglify())
     .pipe(size({title: 'js.min'}))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest('assets/js'));
 });
 

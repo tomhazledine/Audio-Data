@@ -13,8 +13,10 @@
   "author": "@thomashazledine",
   "license": "GPL-3.0",
   "devDependencies": {
+    "babel-preset-env": "^1.5.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "3.0.1",
+    "gulp-babel": "^6.1.2",
     "gulp-cache": "^0.3.0",
     "gulp-concat": "^2.6.0",
     "gulp-imagemin": "^2.3.0",
@@ -26,6 +28,7 @@
     "gulp-sass": "^2.0.4",
     "gulp-scss-lint": "^0.3.0",
     "gulp-size": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.0",
     "gulp-svg-sprite": "^1.2.10",
     "gulp-uglify": "^1.4.1",
     "gulp-util": "^3.0.6",

@@ -288,7 +288,7 @@ function redrawVolume(float){
     volumeOutputData.selectAll('rect')
         .data([float])
         .transition()
-            .duration(0001)
+            .duration(1)
             // Update the height based on the data.
             // We're using this rectangle as a mask
             // over our coloured background, so we
