@@ -13,7 +13,7 @@
   "author": "@thomashazledine",
   "license": "GPL-3.0",
   "devDependencies": {
-    "babel-preset-env": "^1.5.1",
+    "babel-preset-env": "^1.5.2",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "3.0.1",
     "gulp-babel": "^6.1.2",
