@@ -461,7 +461,13 @@ function createPlane() {
     var material = new THREE.MeshPhongMaterial({
         color:colours.red,
         shading:THREE.FlatShading,
-        side:THREE.DoubleSide
+        side:THREE.FrontSide
+    });
+
+    var material_two = new THREE.MeshPhongMaterial({
+        color:colours.red,
+        shading:THREE.FlatShading,
+        side:THREE.BackSide
     });
 
     // mesh
@@ -470,7 +476,7 @@ function createPlane() {
     mesh1.castShadow = true;
     plane_object.add( mesh1 );
     
-    mesh2 = new THREE.Mesh( side_two_geometry, material );
+    mesh2 = new THREE.Mesh( side_one_geometry, material_two );
     // mesh2.receiveShadow = true;
     mesh2.castShadow = true;
     plane_object.add( mesh2 );
