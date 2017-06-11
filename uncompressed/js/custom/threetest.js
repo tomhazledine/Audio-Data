@@ -499,7 +499,7 @@ function createPlane() {
 
     mesh2.position.set(0, 0, -1);
 
-    plane_object.position.set(0, 100, -100);
+    plane_object.position.set(0, 200, -100);
 
     return plane_object;
 
@@ -739,12 +739,15 @@ function mouse_moves_plane(e){
     let screen_width = window.innerWidth;
     let screen_height = window.innerHeight;
 
-    let width_multiplier = e.x / screen_width;
-    let height_multiplier = e.y / screen_height;
-    // let width_multiplier = ( (screen_width / e.x) * 100 ).toFixed(2);
-    // let height_multiplier = ( (screen_height / e.y) * 100 ).toFixed(2);
+    // let width_multiplier = e.x / screen_width;
+    // let height_multiplier = e.y / screen_height;
+    let width_multiplier = ( ( ( e.x / screen_width ) * 100 ).toFixed(2) ) - 50;
+    let height_multiplier = ( ( ( e.y / screen_height ) * 100 ).toFixed(2) ) - 50;
 
-    console.log('com = ' + width_multiplier + ' & ' + height_multiplier)
+    console.log('com = ' + width_multiplier + ' & ' + height_multiplier);
+
+    plane.rotation.z = ( width_multiplier / 2 ) * Math.PI / 180;
+    plane.rotation.x = ( 0 - ( Math.PI / 2 ) ) + ( height_multiplier / 2 ) * Math.PI / 180;
 
     console.log(plane.rotation);
 
