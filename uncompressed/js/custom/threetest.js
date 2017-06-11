@@ -44,8 +44,8 @@ function init() {
 
     // Add an orbit control which allows us to move around the scene. See the three.js example for more details
     // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
-    controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
+    // var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    // controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
 }
 
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer;
@@ -281,11 +281,11 @@ function loop(){
 
     // call the loop function again
     // requestAnimationFrame(loop);
-    var timestamp = + new Date();
-    if (!start) start = timestamp;
-    var progress = timestamp - start;
-    if (progress > 200) {
-        start = timestamp;
+    // var timestamp = + new Date();
+    // if (!start) start = timestamp;
+    // var progress = timestamp - start;
+    // if (progress > 200) {
+        // start = timestamp;
 
         // Rotate the propeller, the sea and the sky
         // airplane.propeller.rotation.x += 0.3;
@@ -301,12 +301,15 @@ function loop(){
         // sphere.mesh.rotation.z += .005;
         // sphere.moveWaves();
         // plane.moveWaves();
-        pulse_plane(plane);
+        // pulse_plane(plane);
         // sky.mesh.rotation.z += .01;
 
         // render the scene
         renderer.render(scene, camera);
-    }
+    // }
+
+    plane.rotation.z += .005;
+    plane.rotation.y += .005;
 
     requestAnimationFrame(loop);
 }
