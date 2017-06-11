@@ -53,8 +53,8 @@ gulp.task('sass', function() {
 });
 
 // Concatenate & Minify JS
-gulp.task('scripts', function() {
-    return gulp.src(['uncompressed/js/jquery/jquery.js','uncompressed/js/vendor/*.js','uncompressed/js/custom/*.js'])
+gulp.task('js', function() {
+    return gulp.src(['uncompressed/js/custom/*.js'])
     .pipe(plumber({
         errorHandler: onError
     }))
@@ -67,6 +67,20 @@ gulp.task('scripts', function() {
     .pipe(uglify())
     .pipe(size({title: 'js.min'}))
     .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest('assets/js'));
+});
+
+gulp.task('staticjs', function() {
+    return gulp.src(['uncompressed/js/jquery/jquery.js','uncompressed/js/vendor/*.js'])
+    .pipe(plumber({
+        errorHandler: onError
+    }))
+    .pipe(concat('vendor.js'))
+    .pipe(size({title: 'js'}))
+    .pipe(gulp.dest('assets/js'))
+    .pipe(rename('vendor.min.js'))
+    .pipe(uglify())
+    .pipe(size({title: 'js.min'}))
     .pipe(gulp.dest('assets/js'));
 });
 
