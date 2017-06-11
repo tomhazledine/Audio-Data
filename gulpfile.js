@@ -193,9 +193,9 @@ gulp.task('listen', function(next) {
 // Watch Files For Changes
 gulp.task('watch', function() {
 
-    gulp.watch('uncompressed/js/jquery/*.js', ['scripts']);
-    gulp.watch('uncompressed/js/vendor/*.js', ['scripts']);
-    gulp.watch('uncompressed/js/custom/*.js', ['scripts']);
+    gulp.watch('uncompressed/js/jquery/*.js', ['vendorjs']);
+    gulp.watch('uncompressed/js/vendor/*.js', ['vendorjs']);
+    gulp.watch('uncompressed/js/custom/*.js', ['js']);
     gulp.watch('uncompressed/js/static/*.js', ['staticjs']);
     gulp.watch('uncompressed/scss/*.scss', ['sass']);
     gulp.watch('uncompressed/images/**', ['images']);
