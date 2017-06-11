@@ -44,8 +44,8 @@ function init() {
 
     // Add an orbit control which allows us to move around the scene. See the three.js example for more details
     // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.
-    // var controls = new THREE.OrbitControls( camera, renderer.domElement );
-    // controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.addEventListener( 'change', function() { renderer.render(scene, camera); } ); // add this only if there is no animation loop (requestAnimationFrame)
 }
 
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer;
@@ -275,28 +275,39 @@ function createSea(){
     scene.add(sea.mesh);
 }
 
+var start = null;
+
 function loop(){
-    // Rotate the propeller, the sea and the sky
-    // airplane.propeller.rotation.x += 0.3;
-    // sea.mesh.rotation.z += .05;
-    sea.moveWaves();
-
-    plane_object.rotation.x += .005;
-    plane_object.rotation.y += .005;
-    plane_object.rotation.z += .005;
-    
-    // sphere.mesh.rotation.x += .005;
-    // sphere.mesh.rotation.y += .005;
-    // sphere.mesh.rotation.z += .005;
-    // sphere.moveWaves();
-    // plane.moveWaves();
-    // pulse_plane(plane);
-    // sky.mesh.rotation.z += .01;
-
-    // render the scene
-    renderer.render(scene, camera);
 
     // call the loop function again
+    // requestAnimationFrame(loop);
+    var timestamp = + new Date();
+    if (!start) start = timestamp;
+    var progress = timestamp - start;
+    if (progress > 200) {
+        start = timestamp;
+
+        // Rotate the propeller, the sea and the sky
+        // airplane.propeller.rotation.x += 0.3;
+        // sea.mesh.rotation.z += .05;
+        sea.moveWaves();
+
+        // plane_object.rotation.x += .005;
+        // plane_object.rotation.y += .005;
+        // plane_object.rotation.z += .005;
+        
+        // sphere.mesh.rotation.x += .005;
+        // sphere.mesh.rotation.y += .005;
+        // sphere.mesh.rotation.z += .005;
+        // sphere.moveWaves();
+        // plane.moveWaves();
+        pulse_plane(plane);
+        // sky.mesh.rotation.z += .01;
+
+        // render the scene
+        renderer.render(scene, camera);
+    }
+
     requestAnimationFrame(loop);
 }
 
@@ -506,11 +517,11 @@ function pulse_plane( plane ) {
         // var vprops = this.waves[i];
         
         // update the position of the vertex
-        // var rand = Math.random() * 100;
-        // v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
-        // v2.z = (v2.z / 2 ) + (rand / 2);
+        var rand = Math.random() * 100;
+        v.z = (v.z / 2 ) + (rand / 2);//vprops.x + Math.cos(vprops.ang)*vprops.amp;
+        v2.z = (v2.z / 2 ) + (rand / 2);
 
-        v.z = 2 * i;
+        // v.z = 2 * i;
         // v2.z = 2 * i;
         // v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
 
