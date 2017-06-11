@@ -308,8 +308,8 @@ function loop(){
         renderer.render(scene, camera);
     // }
 
-    plane.rotation.z += .005;
-    plane.rotation.y += .005;
+    // plane.rotation.z += .005;
+    // plane.rotation.y += .005;
 
     requestAnimationFrame(loop);
 }
@@ -732,3 +732,22 @@ function pulse_plane( plane ) {
     // };
 
     // render();
+    // 
+document.addEventListener("mousemove", mouse_moves_plane);
+
+function mouse_moves_plane(e){
+    let screen_width = window.innerWidth;
+    let screen_height = window.innerHeight;
+
+    let width_multiplier = e.x / screen_width;
+    let height_multiplier = e.y / screen_height;
+    // let width_multiplier = ( (screen_width / e.x) * 100 ).toFixed(2);
+    // let height_multiplier = ( (screen_height / e.y) * 100 ).toFixed(2);
+
+    console.log('com = ' + width_multiplier + ' & ' + height_multiplier)
+
+    console.log(plane.rotation);
+
+    // plane.rotation.z = width_multiplier;
+    // plane.rotation.x = 90 + height_multiplier;
+}
