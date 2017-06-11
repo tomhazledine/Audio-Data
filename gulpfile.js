@@ -70,7 +70,7 @@ gulp.task('js', function() {
     .pipe(gulp.dest('assets/js'));
 });
 
-gulp.task('staticjs', function() {
+gulp.task('vendorjs', function() {
     return gulp.src(['uncompressed/js/jquery/jquery.js','uncompressed/js/vendor/*.js'])
     .pipe(plumber({
         errorHandler: onError
