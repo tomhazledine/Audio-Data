@@ -14,10 +14,12 @@ $red:#ff4136;
 $fuchsia:#f012be;
 $purple:#b10dc9;
 $maroon:#85144b;
-$white:#fff;
-$silver:#ddd;
-$grey:#aaa;
-$black:#111;
+$white:#ffffff;
+$silver:#dddddd;
+$grey:#aaaaaa;
+$black:#111111;
+
+$true_black:#000000;
 
 // Project Colours
 $black: #4d4d4d;
@@ -28,10 +30,10 @@ $primary: #00b7c6;
 
 // Selection Colours
 ::selection{
-  color:$white;
-  background:$black;
+    color:$white;
+    background:$black;
 }
 a::selection{
-  color:$black;
-  background:$white;
+    color:$black;
+    background:$white;
 }
