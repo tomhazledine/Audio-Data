@@ -738,19 +738,10 @@ document.addEventListener("mousemove", mouse_moves_plane);
 function mouse_moves_plane(e){
     let screen_width = window.innerWidth;
     let screen_height = window.innerHeight;
-
-    // let width_multiplier = e.x / screen_width;
-    // let height_multiplier = e.y / screen_height;
+    
     let width_multiplier = ( ( ( e.x / screen_width ) * 100 ).toFixed(2) ) - 50;
     let height_multiplier = ( ( ( e.y / screen_height ) * 100 ).toFixed(2) ) - 50;
 
-    console.log('com = ' + width_multiplier + ' & ' + height_multiplier);
-
     plane.rotation.z = ( width_multiplier / 2 ) * Math.PI / 180;
     plane.rotation.x = ( 0 - ( Math.PI / 2 ) ) + ( height_multiplier / 2 ) * Math.PI / 180;
-
-    console.log(plane.rotation);
-
-    // plane.rotation.z = width_multiplier;
-    // plane.rotation.x = 90 + height_multiplier;
 }
