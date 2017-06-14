@@ -12,10 +12,14 @@ let audio_url = '/files/lostThatEasy.mp3';
 // Get the correct context.
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
+const offline_context = new OfflineAudioContext( 2, 44100 * 40, 44100 );
 
 
 var audioBuffer;
 var sourceNode;
+var fftSize = 1024;
+
+var offline_source = offline_context.createBufferSource();
 
 // load the sound
 setupAudioNodes();
@@ -34,6 +38,8 @@ function loadSound(url) {
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
 
+    console.log('starting to load sound');
+
     // When loaded decode the data
     request.onload = function() {
 
@@ -42,13 +48,71 @@ function loadSound(url) {
             // when the audio is decoded play the sound
             // playSound(buffer);
             audioBuffer = buffer;
-            sourceNode.buffer = buffer;
-            sourceNode.start(0);
-            context.suspend();
+            // sourceNode.buffer = buffer;
+            // displayBuffer( buffer );
+            // sourceNode.start(0);
+            // context.suspend();
             console.log('loaded!');
+
+            offline_source.buffer = audioBuffer;
+            offline_source.connect(offline_context.destination);
+            offline_source.start();
+            //offline_source.loop = true;
+            offline_context.startRendering().then(function(renderedBuffer) {
+                console.log('Rendering completed successfully');
+                // var context = new (window.AudioContext || window.webkitAudioContext)();
+                // var song = context.createBufferSource();
+                // song.buffer = renderedBuffer;
+                // console.log(renderedBuffer);
+
+                var processor = offline_context.createScriptProcessor(fftSize, 1, 1);
+                offline_source.connect(processor);
+
+                processor.onaudioprocess = function( e ) {
+
+                    console.log('running onaudioprocess');
+                    
+                    var input = e.inputBuffer.getChannelData(0);
+                    
+                    var data = new Uint8Array( (fftSize * 2) );
+                    
+                    var fft = fft.getByteFrequencyData( data );
+                    
+                    console.log(fft);
+                  // do whatever you want with `data`
+                }
+
+                offline_context.startRendering();
+
+                // song.connect(context.destination);
+
+                // play.onclick = function() {
+                //     song.start();
+                // }
+            }).catch(function(err) {
+                console.log('Rendering failed: ' + err);
+                // Note: The promise should reject when startRendering is called a second time on an OfflineAudioContext
+            });
         }, onError);
-    }
+    };
     request.send();
+}
+
+function displayBuffer(buff /* is an AudioBuffer */) {
+   var leftChannel = buff.getChannelData(0); // Float32Array describing left channel
+   console.log(leftChannel);
+
+   for (var i=0; i<  leftChannel.length; i++) {
+       // on which line do we get ?
+       var x = Math.floor ( canvasWidth * i / leftChannel.length ) ;
+       var y = leftChannel[i] * canvasHeight / 2 ;
+       context.beginPath();
+       context.moveTo( x  , 0 );
+       context.lineTo( x+1, y );
+       context.stroke();
+   }
+   context.restore();
+   console.log('done');
 }
 
 

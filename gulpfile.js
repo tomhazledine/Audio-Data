@@ -157,7 +157,7 @@ gulp.task('scss-lint', function() {
 // Lets lint our JS
 gulp.task('jslint', function() {
     return gulp.src('uncompressed/js/custom/*.js')
-    .pipe(jshint())
+    .pipe(jshint({'esversion': 6}))
     .pipe(jshint.reporter('default'));
 });
 
